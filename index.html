@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apollo Workbench · Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0: #070912;
+  --bg-1: #0d1121;
+  --bg-2: #141a2e;
+  --bg-3: #1c2440;
+  --text: #e7ebff;
+  --text-hi: #ffffff;
+  --muted: #8892b5;
+  --dim: #5a6388;
+  --indigo: #6366f1;
+  --violet: #a855f7;
+  --cyan: #22d3ee;
+  --emerald: #10b981;
+  --grad: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --grad-2: linear-gradient(135deg, #22d3ee 0%, #6366f1 100%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(99, 102, 241, 0.2), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(168, 85, 247, 0.14), transparent 55%),
+    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(34, 211, 238, 0.08), transparent 60%);
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 32px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.brand-logo {
+  width: 56px; height: 56px;
+  border-radius: 15px;
+  background: var(--grad);
+  display: grid; place-items: center;
+  box-shadow: 0 8px 28px rgba(168, 85, 247, 0.35);
+}
+.brand-text .name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-hi);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.brand-text .tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: var(--text-hi);
+  margin-bottom: 18px;
+}
+.hero h1 em {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: italic;
+  font-weight: 500;
+}
+.hero p {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 640px;
+  line-height: 1.6;
+  margin-bottom: 48px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.card {
+  display: block;
+  padding: 32px;
+  background: rgba(22, 29, 51, 0.5);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--c-grad, var(--grad));
+  opacity: 0.9;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(139, 92, 246, 0.45);
+  background: rgba(32, 42, 74, 0.7);
+}
+.card-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--c-grad, var(--grad));
+  display: grid; place-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px var(--c-shadow, rgba(99,102,241,0.3));
+}
+.card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-hi);
+  margin-bottom: 8px;
+}
+.card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+.card-meta {
+  display: flex;
+  gap: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.card-meta b { color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
+.card-cta {
+  position: absolute;
+  bottom: 24px; right: 24px;
+  color: var(--c-color, var(--indigo));
+  opacity: 0;
+  transition: all 0.25s ease;
+  transform: translateX(-6px);
+}
+.card:hover .card-cta { opacity: 1; transform: translateX(0); }
+.footer {
+  margin-top: 56px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.footer .pill {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--emerald);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+@media (max-width: 720px) {
+  .cards { grid-template-columns: 1fr; }
+  .wrap { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-logo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="name">Apollo Workbench</div>
+      <div class="tag">Global Lead Atlas · CRM</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Open the right surface <em>for the job.</em></h1>
+    <p>A curated atlas of 115,664 verified decision-makers across 56 markets. Explore strategic insights or work your pipeline.</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="./beautiful-dashboard.html" style="--c-grad: linear-gradient(135deg,#6366f1,#a855f7); --c-color: #a855f7; --c-shadow: rgba(168,85,247,0.35);">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="9"/>
+          <rect x="14" y="3" width="7" height="5"/>
+          <rect x="14" y="12" width="7" height="9"/>
+          <rect x="3" y="16" width="7" height="5"/>
+        </svg>
+      </div>
+      <h3>Analytics Dashboard</h3>
+      <p>Executive overview — country rankings, role distribution, top companies, verified-email signals. Read the market at a glance.</p>
+      <div class="card-meta">
+        <div><b>115,664</b> contacts</div>
+        <div><b>56</b> markets</div>
+        <div><b>22,806</b> companies</div>
+      </div>
+      <span class="card-cta">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="./marketing-tool.html" style="--c-grad: linear-gradient(135deg,#22d3ee,#6366f1); --c-color: #22d3ee; --c-shadow: rgba(34,211,238,0.3);">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <h3>CRM Workbench</h3>
+      <p>Your daily-work surface — country → company → people drill-down, pipeline stages, reminders, activity logs, compose + BCC.</p>
+      <div class="card-meta">
+        <div>Pipeline</div>
+        <div>Reminders</div>
+        <div>Compose · Export</div>
+      </div>
+      <span class="card-cta">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="footer">
+    <div>APOLLO WORKBENCH</div>
+    <div class="pill">● Deployed · Static · Vercel</div>
+  </div>
+</div>
+</body>
+</html>

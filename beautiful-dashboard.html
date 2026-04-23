@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apollo Intelligence · Global Lead Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-0: #070912;
+  --bg-1: #0d1121;
+  --bg-2: #141a2e;
+  --bg-3: #1c2440;
+  --surface: rgba(22, 29, 51, 0.65);
+  --surface-hi: rgba(32, 42, 74, 0.85);
+  --border: rgba(99, 102, 241, 0.12);
+  --border-hi: rgba(139, 92, 246, 0.35);
+  --text: #e7ebff;
+  --text-hi: #ffffff;
+  --muted: #8892b5;
+  --dim: #5a6388;
+  --violet: #a855f7;
+  --indigo: #6366f1;
+  --cyan: #22d3ee;
+  --emerald: #10b981;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+  --grad-1: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --grad-2: linear-gradient(135deg, #22d3ee 0%, #6366f1 100%);
+  --grad-3: linear-gradient(135deg, #10b981 0%, #22d3ee 100%);
+  --grad-4: linear-gradient(135deg, #f59e0b 0%, #f43f5e 100%);
+  --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --shadow-1: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(168, 85, 247, 0.12), transparent 55%),
+    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(34, 211, 238, 0.08), transparent 60%);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 80%);
+  z-index: 0;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============ HEADER ============ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.brand-logo {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--grad-1);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+.brand-logo::after {
+  content: ''; position: absolute; inset: 2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 40%);
+}
+.brand-logo svg { position: relative; z-index: 1; }
+
+.brand-text .brand-name {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-hi);
+  line-height: 1;
+}
+.brand-text .brand-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(34px, 4.2vw, 56px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--text-hi);
+  max-width: 900px;
+}
+.hero h1 .accent {
+  background: var(--grad-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.hero-sub {
+  color: var(--muted);
+  font-size: 15.5px;
+  margin-top: 14px;
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+.hero-meta {
+  display: flex; flex-direction: column; gap: 12px;
+  align-items: flex-end;
+}
+.live-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--emerald);
+}
+.live-pill::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 10px var(--emerald);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.date-stamp {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* ============ KPI GRID ============ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.kpi {
+  position: relative;
+  padding: 22px 22px 20px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.kpi:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-hi);
+}
+.kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--bar, var(--grad-1));
+  opacity: 0.9;
+}
+.kpi-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--icon-bg, rgba(99, 102, 241, 0.12));
+  color: var(--icon-fg, var(--indigo));
+  margin-bottom: 16px;
+}
+.kpi-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-hi);
+  line-height: 1;
+}
+.kpi-sub {
+  font-size: 12px;
+  color: var(--dim);
+  margin-top: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.kpi-sub .up { color: var(--emerald); font-weight: 600; }
+
+/* ============ GRID SECTIONS ============ */
+.row {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.row.two-col  { grid-template-columns: 1.6fr 1fr; }
+.row.split    { grid-template-columns: 1fr 1fr; }
+.row.full     { grid-template-columns: 1fr; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  backdrop-filter: blur(20px);
+  position: relative;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+.panel-title {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text-hi);
+}
+.panel-sub {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.panel-badge {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--indigo);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  white-space: nowrap;
+}
+
+/* ============ BAR CHART (top countries) ============ */
+.bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.bar-list::-webkit-scrollbar { width: 6px; }
+.bar-list::-webkit-scrollbar-track { background: transparent; }
+.bar-list::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.bar-row:hover {
+  background: rgba(99, 102, 241, 0.06);
+  border-color: var(--border-hi);
+}
+.bar-row.special {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.06), transparent);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+.bar-rank {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  text-align: right;
+  font-weight: 500;
+}
+.bar-body { min-width: 0; }
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.bar-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bar-row.special .bar-name { color: var(--amber); }
+.bar-count {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--grad-1);
+  border-radius: 999px;
+  position: relative;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bar-fill::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25) 50%, transparent);
+  animation: shimmer 3s infinite;
+}
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.bar-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+  text-align: right;
+  min-width: 70px;
+}
+
+/* ============ DONUT + LEGEND ============ */
+.donut-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.donut-canvas-wrap {
+  position: relative;
+  height: 240px;
+}
+.donut-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.donut-center .num {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-hi);
+  line-height: 1;
+}
+.donut-center .lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.role-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.role-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+}
+.role-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.role-info { flex: 1; min-width: 0; }
+.role-name {
+  font-size: 12px;
+  color: var(--text-hi);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.role-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ============ COUNTRY GRID ============ */
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.search-box {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-hi);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.search-box input:focus {
+  border-color: var(--indigo);
+  background: rgba(99, 102, 241, 0.05);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+.search-box input::placeholder { color: var(--dim); }
+.search-box svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: var(--r-md);
+}
+.filter-btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filter-btn:hover { color: var(--text); }
+.filter-btn.active {
+  background: var(--indigo);
+  color: var(--text-hi);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.country-card {
+  padding: 18px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.country-card::before {
+  content: ''; position: absolute; inset: -1px;
+  border-radius: var(--r-md);
+  padding: 1px;
+  background: var(--grad-1);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.country-card:hover {
+  transform: translateY(-3px);
+  background: rgba(99, 102, 241, 0.04);
+}
+.country-card:hover::before { opacity: 1; }
+.country-card.special {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), transparent 60%);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.cc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.cc-name {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-hi);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.cc-rank {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.cc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.cc-stat-lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.cc-stat-val {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-hi);
+  letter-spacing: -0.02em;
+}
+.cc-bars {
+  display: flex;
+  gap: 3px;
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+.cc-seg { height: 100%; }
+
+/* ============ TOP COMPANIES GLOBAL ============ */
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+.company-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s ease;
+}
+.company-card:hover {
+  background: rgba(99, 102, 241, 0.05);
+  border-color: var(--border-hi);
+}
+.company-avatar {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--c-grad, var(--grad-1));
+  display: grid; place-items: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.company-body { min-width: 0; }
+.company-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.company-country {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.company-count {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-hi);
+  letter-spacing: -0.02em;
+}
+
+/* ============ DRAWER ============ */
+.drawer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(7, 9, 18, 0.7);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(560px, 92vw);
+  background: var(--bg-1);
+  border-left: 1px solid var(--border-hi);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 101;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.drawer.active { transform: translateX(0); }
+
+.drawer-head {
+  padding: 28px 28px 22px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), transparent 70%);
+  position: relative;
+}
+.drawer-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 36px; height: 36px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: all 0.2s ease;
+}
+.drawer-close:hover {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--rose);
+  border-color: var(--rose);
+}
+.drawer-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  margin-bottom: 8px;
+}
+.drawer-title {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-hi);
+}
+.drawer-body { padding: 24px 28px 40px; }
+
+.d-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.d-kpi {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  text-align: center;
+}
+.d-kpi-val {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-hi);
+  letter-spacing: -0.02em;
+}
+.d-kpi-lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.d-section-title {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 24px 0 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.verify-ring {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: rgba(16, 185, 129, 0.04);
+  margin-bottom: 16px;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  margin-top: 50px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+.footer a { color: var(--muted); text-decoration: none; }
+.footer a:hover { color: var(--indigo); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .row.two-col, .row.split { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .container { padding: 24px 18px 60px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { grid-template-columns: 1fr; }
+  .hero-meta { align-items: flex-start; }
+  .d-kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Chart.js canvas sizing control */
+canvas { max-width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="hero">
+    <div>
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">Apollo Intelligence</div>
+          <div class="brand-tag">Global Lead Atlas · v2.1</div>
+        </div>
+      </div>
+      <h1>The global trade network, <span class="accent">mapped in real time.</span></h1>
+      <p class="hero-sub">A curated atlas of 115,664 verified decision-makers across 56 markets and 22,806 unique companies — surfacing where to build your next distribution, licensing, or procurement relationship.</p>
+    </div>
+    <div class="hero-meta">
+      <span class="live-pill">Live · Synced</span>
+      <span class="date-stamp" id="dateStamp"></span>
+    </div>
+  </header>
+
+  <!-- KPI STRIP -->
+  <section class="kpi-grid">
+    <div class="kpi" style="--bar: var(--grad-1); --icon-bg: rgba(168, 85, 247, 0.15); --icon-fg: var(--violet);">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="kpi-label">Total Contacts</div>
+      <div class="kpi-value" id="kpiContacts">0</div>
+      <div class="kpi-sub"><span class="up">56</span> markets covered</div>
+    </div>
+    <div class="kpi" style="--bar: var(--grad-2); --icon-bg: rgba(34, 211, 238, 0.15); --icon-fg: var(--cyan);">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="kpi-label">Countries / Segments</div>
+      <div class="kpi-value" id="kpiCountries">0</div>
+      <div class="kpi-sub">4 vertical segments included</div>
+    </div>
+    <div class="kpi" style="--bar: var(--grad-3); --icon-bg: rgba(16, 185, 129, 0.15); --icon-fg: var(--emerald);">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg></div>
+      <div class="kpi-label">Unique Companies</div>
+      <div class="kpi-value" id="kpiCompanies">0</div>
+      <div class="kpi-sub">Across all markets</div>
+    </div>
+    <div class="kpi" style="--bar: var(--grad-4); --icon-bg: rgba(245, 158, 11, 0.15); --icon-fg: var(--amber);">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <div class="kpi-label">Emails Captured</div>
+      <div class="kpi-value" id="kpiEmails">0</div>
+      <div class="kpi-sub"><span class="up" id="emailPct">0%</span> of total contacts</div>
+    </div>
+    <div class="kpi" style="--bar: linear-gradient(135deg, #10b981, #6366f1); --icon-bg: rgba(16, 185, 129, 0.15); --icon-fg: var(--emerald);">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="kpi-label">Verified Deliverable</div>
+      <div class="kpi-value" id="kpiVerified">0</div>
+      <div class="kpi-sub"><span class="up" id="verifyPct">0%</span> verification rate</div>
+    </div>
+    <div class="kpi" style="--bar: linear-gradient(135deg, #ec4899, #f43f5e); --icon-bg: rgba(236, 72, 153, 0.15); --icon-fg: #ec4899;">
+      <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="kpi-label">Top Market</div>
+      <div class="kpi-value" id="kpiTopMarket" style="font-size: 22px; line-height:1.15;">—</div>
+      <div class="kpi-sub" id="kpiTopMarketSub">Calculating…</div>
+    </div>
+  </section>
+
+  <!-- ROW: TOP COUNTRIES + ROLE DONUT -->
+  <section class="row two-col">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Contacts by Market</div>
+          <div class="panel-sub">Sorted by volume · Click to inspect</div>
+        </div>
+        <span class="panel-badge" id="countryBadge">0 markets</span>
+      </div>
+      <div class="bar-list" id="barList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Decision-maker Mix</div>
+          <div class="panel-sub">Global role distribution</div>
+        </div>
+      </div>
+      <div class="donut-wrap">
+        <div class="donut-canvas-wrap">
+          <canvas id="donut"></canvas>
+          <div class="donut-center">
+            <div class="num" id="donutNum">0</div>
+            <div class="lbl">Tagged Roles</div>
+          </div>
+        </div>
+        <div class="role-legend" id="roleLegend"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROW: COUNTRY EXPLORER -->
+  <section class="row full">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Market Explorer</div>
+          <div class="panel-sub">Search, filter, and open any market for a deep-dive</div>
+        </div>
+        <span class="panel-badge" id="filteredBadge">0 showing</span>
+      </div>
+      <div class="controls">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchInput" type="text" placeholder="Search markets, regions, segments…">
+        </div>
+        <div class="filter-group" id="filterGroup">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="top">Top 10</button>
+          <button class="filter-btn" data-filter="segments">Segments</button>
+          <button class="filter-btn" data-filter="asia">Asia</button>
+          <button class="filter-btn" data-filter="latam">LatAm</button>
+          <button class="filter-btn" data-filter="mena">MENA</button>
+          <button class="filter-btn" data-filter="africa">Africa</button>
+          <button class="filter-btn" data-filter="europe">Europe</button>
+        </div>
+      </div>
+      <div class="country-grid" id="countryGrid"></div>
+    </div>
+  </section>
+
+  <!-- ROW: TOP COMPANIES GLOBAL -->
+  <section class="row full">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Most Represented Companies</div>
+          <div class="panel-sub">Organizations with the deepest coverage across the atlas</div>
+        </div>
+        <span class="panel-badge">Top 24</span>
+      </div>
+      <div class="company-grid" id="companyGrid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>APOLLO INTELLIGENCE · LEAD ATLAS</div>
+    <div>Dataset snapshot · <span id="footerDate"></span> · <a href="#" onclick="window.print();return false;">Export view</a></div>
+  </footer>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-tag" id="drawerTag">MARKET DETAIL</div>
+    <div class="drawer-title" id="drawerTitle">—</div>
+    <button class="drawer-close" id="drawerClose">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<script>
+// ============ DATA (embedded from apollo summary) ============
+const DATA = {"countries": [{"label": "Brazil", "slug": "brazil", "contacts": 11278, "companies": 2453, "email_count": 10986, "verified_count": 10937, "role_counts": {"Regulatory / QA": 56, "Manager": 318, "C-Suite / Founder": 208, "Sales / BD": 110, "Director": 111, "VP": 4, "Head": 62, "Procurement / Purchase": 9}}, {"label": "Non-Pharma", "slug": "non-pharma", "contacts": 10505, "companies": 2777, "email_count": 10360, "verified_count": 10322, "role_counts": {"Regulatory / QA": 119, "Sales / BD": 490, "Manager": 2073, "C-Suite / Founder": 1253, "Director": 845, "Head": 316, "Procurement / Purchase": 39, "VP": 64}}, {"label": "Non-Pharma (alt)", "slug": "non-pharma-alt", "contacts": 7315, "companies": 2757, "email_count": 7251, "verified_count": 7231, "role_counts": {"Manager": 1399, "Director": 544, "Head": 213, "C-Suite / Founder": 946, "Sales / BD": 340, "Procurement / Purchase": 39, "Regulatory / QA": 93, "VP": 33}}, {"label": "Argentina", "slug": "argentina", "contacts": 6106, "companies": 942, "email_count": 6042, "verified_count": 6030, "role_counts": {"Director": 274, "C-Suite / Founder": 98, "Manager": 289, "Regulatory / QA": 40, "Sales / BD": 50, "Head": 30, "Procurement / Purchase": 4, "VP": 3}}, {"label": "Multiple Countries", "slug": "multiple-countries", "contacts": 6087, "companies": 1236, "email_count": 6023, "verified_count": 6011, "role_counts": {"C-Suite / Founder": 190, "Manager": 1128, "Regulatory / QA": 263, "Head": 192, "Director": 215, "Sales / BD": 197, "Procurement / Purchase": 33, "VP": 6}}, {"label": "Hong Kong", "slug": "hong-kong", "contacts": 5072, "companies": 973, "email_count": 4553, "verified_count": 4417, "role_counts": {"Procurement / Purchase": 22, "Manager": 1896, "C-Suite / Founder": 343, "Director": 560, "Head": 284, "Sales / BD": 176, "Regulatory / QA": 61, "VP": 33}}, {"label": "Italy", "slug": "italy", "contacts": 4681, "companies": 1683, "email_count": 4641, "verified_count": 4639, "role_counts": {"C-Suite / Founder": 330, "Manager": 1116, "Director": 144, "Sales / BD": 404, "Regulatory / QA": 128, "Head": 48, "VP": 5, "Procurement / Purchase": 29}}, {"label": "◆ Purchasers / Directors", "slug": "purchasers-directors", "contacts": 4351, "companies": 2461, "email_count": 4256, "verified_count": 4246, "role_counts": {"Director": 1074, "Procurement / Purchase": 411, "Manager": 543, "Head": 115, "C-Suite / Founder": 469, "Regulatory / QA": 24, "Sales / BD": 35, "VP": 7}}, {"label": "Russia", "slug": "russia", "contacts": 4031, "companies": 576, "email_count": 3958, "verified_count": 3948, "role_counts": {"Manager": 1196, "C-Suite / Founder": 70, "Head": 616, "Director": 406, "Regulatory / QA": 54, "Sales / BD": 51, "VP": 11, "Procurement / Purchase": 24}}, {"label": "China", "slug": "china", "contacts": 3154, "companies": 1263, "email_count": 3121, "verified_count": 3119, "role_counts": {"Director": 600, "Manager": 1146, "Head": 178, "VP": 75, "C-Suite / Founder": 173, "Sales / BD": 225, "Procurement / Purchase": 13, "Regulatory / QA": 13}}, {"label": "Singapore", "slug": "singapore", "contacts": 3101, "companies": 811, "email_count": 3044, "verified_count": 3038, "role_counts": {"Manager": 896, "Director": 237, "Procurement / Purchase": 23, "C-Suite / Founder": 177, "Sales / BD": 163, "Head": 105, "VP": 7, "Regulatory / QA": 76}}, {"label": "Iran", "slug": "iran", "contacts": 2617, "companies": 301, "email_count": 2568, "verified_count": 2563, "role_counts": {"Sales / BD": 187, "Head": 123, "Manager": 527, "C-Suite / Founder": 86, "Regulatory / QA": 166, "Director": 60, "VP": 1, "Procurement / Purchase": 11}}, {"label": "Ecuador", "slug": "ecuador", "contacts": 2583, "companies": 449, "email_count": 2546, "verified_count": 2539, "role_counts": {"Manager": 156, "C-Suite / Founder": 67, "Director": 78, "Head": 24, "Sales / BD": 44, "Regulatory / QA": 19, "VP": 1}}, {"label": "◆ Founders (Pharma)", "slug": "founders-pharma", "contacts": 2486, "companies": 2257, "email_count": 2431, "verified_count": 2426, "role_counts": {"C-Suite / Founder": 1564, "Director": 674, "Manager": 1, "Head": 3}}, {"label": "Egypt", "slug": "egypt", "contacts": 2357, "companies": 552, "email_count": 2303, "verified_count": 2294, "role_counts": {"Manager": 683, "C-Suite / Founder": 77, "Regulatory / QA": 72, "Director": 72, "Sales / BD": 196, "Head": 96, "Procurement / Purchase": 9}}, {"label": "Mexico", "slug": "mexico", "contacts": 2357, "companies": 552, "email_count": 2303, "verified_count": 2294, "role_counts": {"Manager": 683, "C-Suite / Founder": 77, "Regulatory / QA": 72, "Director": 72, "Sales / BD": 196, "Head": 96, "Procurement / Purchase": 9}}, {"label": "Croatia", "slug": "croatia", "contacts": 2238, "companies": 236, "email_count": 2219, "verified_count": 2215, "role_counts": {"Head": 131, "Regulatory / QA": 127, "Manager": 496, "Director": 164, "C-Suite / Founder": 46, "Procurement / Purchase": 28, "Sales / BD": 112, "VP": 1}}, {"label": "Shanghai", "slug": "shanghai", "contacts": 1985, "companies": 455, "email_count": 1970, "verified_count": 1968, "role_counts": {"Director": 479, "Head": 163, "C-Suite / Founder": 110, "Sales / BD": 53, "Manager": 546, "VP": 67, "Procurement / Purchase": 9, "Regulatory / QA": 13}}, {"label": "◆ Indian Directors", "slug": "indian-directors", "contacts": 1864, "companies": 1361, "email_count": 1849, "verified_count": 1849, "role_counts": {"Director": 1334, "C-Suite / Founder": 525, "VP": 1}}, {"label": "Qatar", "slug": "qatar", "contacts": 1766, "companies": 468, "email_count": 1742, "verified_count": 1739, "role_counts": {"C-Suite / Founder": 89, "Director": 62, "Manager": 416, "Regulatory / QA": 85, "Procurement / Purchase": 20, "Sales / BD": 171, "Head": 61, "VP": 1}}, {"label": "Peru", "slug": "peru", "contacts": 1695, "companies": 272, "email_count": 1682, "verified_count": 1673, "role_counts": {"Manager": 86, "Director": 54, "Head": 10, "C-Suite / Founder": 15, "Regulatory / QA": 17, "VP": 1, "Sales / BD": 6}}, {"label": "Bangladesh", "slug": "bangladesh", "contacts": 1597, "companies": 274, "email_count": 1564, "verified_count": 1564, "role_counts": {"Sales / BD": 63, "Manager": 506, "Head": 45, "C-Suite / Founder": 61, "Regulatory / QA": 80, "Director": 23, "Procurement / Purchase": 7}}, {"label": "Chile", "slug": "chile", "contacts": 1596, "companies": 202, "email_count": 1589, "verified_count": 1585, "role_counts": {"C-Suite / Founder": 16, "Sales / BD": 7, "Director": 62, "Manager": 93, "Head": 8, "Regulatory / QA": 8, "Procurement / Purchase": 4}}, {"label": "South Africa", "slug": "south-africa", "contacts": 1581, "companies": 627, "email_count": 1548, "verified_count": 1545, "role_counts": {"Director": 120, "Manager": 430, "Regulatory / QA": 61, "Sales / BD": 163, "Head": 27, "C-Suite / Founder": 158, "Procurement / Purchase": 21}}, {"label": "Jordan", "slug": "jordan", "contacts": 1425, "companies": 210, "email_count": 1384, "verified_count": 1382, "role_counts": {"Manager": 308, "Regulatory / QA": 169, "Sales / BD": 81, "C-Suite / Founder": 37, "Director": 57, "Procurement / Purchase": 7, "Head": 58, "VP": 2}}, {"label": "Health & Wellness", "slug": "health-wellness", "contacts": 1323, "companies": 1186, "email_count": 1271, "verified_count": 1271, "role_counts": {"C-Suite / Founder": 817, "Director": 442, "Procurement / Purchase": 27, "Manager": 33, "Head": 4}}, {"label": "Bulgaria", "slug": "bulgaria", "contacts": 1293, "companies": 247, "email_count": 1282, "verified_count": 1271, "role_counts": {"Manager": 425, "C-Suite / Founder": 33, "Head": 55, "Sales / BD": 90, "Regulatory / QA": 32, "Director": 60, "Procurement / Purchase": 18, "VP": 1}}, {"label": "World Importers (alt)", "slug": "world-importers-alt", "contacts": 1216, "companies": 224, "email_count": 1193, "verified_count": 1191, "role_counts": {"Manager": 338, "Head": 33, "Director": 61, "Regulatory / QA": 7, "C-Suite / Founder": 91, "Sales / BD": 98, "Procurement / Purchase": 15, "VP": 2}}, {"label": "Saudi Arabia", "slug": "saudi-arabia", "contacts": 1196, "companies": 186, "email_count": 1161, "verified_count": 1161, "role_counts": {"Sales / BD": 46, "Manager": 431, "Regulatory / QA": 80, "Director": 90, "C-Suite / Founder": 24, "Head": 77, "Procurement / Purchase": 10}}, {"label": "Turkey", "slug": "turkey", "contacts": 1132, "companies": 297, "email_count": 1117, "verified_count": 1113, "role_counts": {"Manager": 264, "C-Suite / Founder": 55, "Sales / BD": 120, "Regulatory / QA": 48, "Head": 16, "Procurement / Purchase": 3, "Director": 27, "VP": 1}}, {"label": "Nepal & Sri Lanka", "slug": "nepal-sri-lanka", "contacts": 1128, "companies": 201, "email_count": 1123, "verified_count": 1121, "role_counts": {"C-Suite / Founder": 27, "Manager": 463, "Director": 34, "Head": 31, "Sales / BD": 86, "Regulatory / QA": 55, "Procurement / Purchase": 4}}, {"label": "Malaysia", "slug": "malaysia", "contacts": 1107, "companies": 347, "email_count": 1102, "verified_count": 1099, "role_counts": {"C-Suite / Founder": 48, "Sales / BD": 95, "Director": 61, "Manager": 365, "Regulatory / QA": 51, "Procurement / Purchase": 6, "Head": 39, "VP": 1}}, {"label": "World Importers", "slug": "world-importers", "contacts": 1085, "companies": 208, "email_count": 1077, "verified_count": 1075, "role_counts": {"Head": 29, "Sales / BD": 88, "Manager": 298, "C-Suite / Founder": 80, "Procurement / Purchase": 15, "Director": 55, "Regulatory / QA": 5, "VP": 2}}, {"label": "Lebanon", "slug": "lebanon", "contacts": 1081, "companies": 290, "email_count": 1034, "verified_count": 1033, "role_counts": {"Manager": 274, "Sales / BD": 105, "C-Suite / Founder": 53, "Regulatory / QA": 51, "VP": 2, "Director": 42, "Head": 37, "Procurement / Purchase": 3}}, {"label": "Uruguay", "slug": "uruguay", "contacts": 1024, "companies": 104, "email_count": 1013, "verified_count": 1012, "role_counts": {"Manager": 62, "C-Suite / Founder": 18, "Director": 30, "Regulatory / QA": 10, "Sales / BD": 5, "Head": 18, "Procurement / Purchase": 2}}, {"label": "Costa Rica", "slug": "costa-rica", "contacts": 968, "companies": 194, "email_count": 959, "verified_count": 959, "role_counts": {"C-Suite / Founder": 11, "Regulatory / QA": 11, "Manager": 74, "Director": 48, "Sales / BD": 19, "Procurement / Purchase": 9, "Head": 12}}, {"label": "◆ Indian Purchasers", "slug": "indian-purchasers", "contacts": 907, "companies": 548, "email_count": 895, "verified_count": 895, "role_counts": {"Procurement / Purchase": 446, "Manager": 356, "Head": 33, "Director": 25, "C-Suite / Founder": 27}}, {"label": "Guatemala", "slug": "guatemala", "contacts": 887, "companies": 175, "email_count": 869, "verified_count": 868, "role_counts": {"Manager": 69, "Director": 31, "C-Suite / Founder": 8, "Regulatory / QA": 10, "Sales / BD": 8, "Head": 10, "Procurement / Purchase": 2}}, {"label": "Morocco, Senegal, Togo", "slug": "morocco-senegal-togo", "contacts": 795, "companies": 168, "email_count": 787, "verified_count": 785, "role_counts": {"Regulatory / QA": 11, "Manager": 98, "Head": 8, "C-Suite / Founder": 8, "Sales / BD": 42, "Director": 7, "Procurement / Purchase": 3, "VP": 1}}, {"label": "Algeria", "slug": "algeria", "contacts": 750, "companies": 109, "email_count": 738, "verified_count": 737, "role_counts": {"Sales / BD": 82, "Procurement / Purchase": 3, "Manager": 116, "Regulatory / QA": 14, "VP": 3, "Head": 10, "Director": 9, "C-Suite / Founder": 5}}, {"label": "Cameroon, Burundi, Latvia", "slug": "cameroon-burundi-latvia", "contacts": 689, "companies": 224, "email_count": 678, "verified_count": 675, "role_counts": {"Director": 21, "Manager": 145, "C-Suite / Founder": 19, "Head": 42, "Regulatory / QA": 20, "Sales / BD": 48, "Procurement / Purchase": 3}}, {"label": "Botswana & Angola", "slug": "botswana-angola", "contacts": 582, "companies": 222, "email_count": 572, "verified_count": 570, "role_counts": {"Regulatory / QA": 10, "Head": 12, "Manager": 129, "C-Suite / Founder": 14, "Sales / BD": 53, "Procurement / Purchase": 3, "Director": 17, "VP": 1}}, {"label": "Oman, Somalia, Yemen", "slug": "oman-somalia-yemen", "contacts": 500, "companies": 195, "email_count": 499, "verified_count": 499, "role_counts": {"Manager": 127, "Head": 18, "Sales / BD": 46, "Procurement / Purchase": 7, "C-Suite / Founder": 17, "Director": 7, "Regulatory / QA": 15}}, {"label": "Tanzania", "slug": "tanzania", "contacts": 495, "companies": 153, "email_count": 493, "verified_count": 491, "role_counts": {"Manager": 110, "Sales / BD": 55, "C-Suite / Founder": 5, "Procurement / Purchase": 6, "Head": 13, "Director": 6, "Regulatory / QA": 7}}, {"label": "Azerbaijan", "slug": "azerbaijan", "contacts": 469, "companies": 86, "email_count": 458, "verified_count": 457, "role_counts": {"Manager": 75, "Sales / BD": 15, "C-Suite / Founder": 7, "Head": 35, "Regulatory / QA": 6, "Procurement / Purchase": 10, "Director": 10}}, {"label": "Indonesia", "slug": "indonesia", "contacts": 465, "companies": 144, "email_count": 461, "verified_count": 461, "role_counts": {"Head": 27, "Sales / BD": 23, "Manager": 117, "C-Suite / Founder": 13, "Director": 16, "Regulatory / QA": 28, "Procurement / Purchase": 2}}, {"label": "Sudan", "slug": "sudan", "contacts": 394, "companies": 182, "email_count": 385, "verified_count": 384, "role_counts": {"Director": 9, "C-Suite / Founder": 3, "Manager": 47, "Sales / BD": 23, "Regulatory / QA": 9, "Procurement / Purchase": 1, "Head": 2, "VP": 1}}, {"label": "Panama, Costa Rica, Honduras", "slug": "panama-costa-rica-honduras", "contacts": 393, "companies": 154, "email_count": 381, "verified_count": 380, "role_counts": {"Procurement / Purchase": 4, "Regulatory / QA": 6, "Director": 23, "Sales / BD": 11, "Manager": 32, "C-Suite / Founder": 8, "Head": 2, "VP": 1}}, {"label": "Suriname, Guyana, Slovakia", "slug": "suriname-guyana-slovakia", "contacts": 381, "companies": 129, "email_count": 381, "verified_count": 381, "role_counts": {"Manager": 120, "Regulatory / QA": 24, "C-Suite / Founder": 17, "Head": 19, "Director": 17, "Sales / BD": 21, "Procurement / Purchase": 6}}, {"label": "Uganda", "slug": "uganda", "contacts": 371, "companies": 124, "email_count": 371, "verified_count": 367, "role_counts": {"Manager": 112, "Procurement / Purchase": 6, "Head": 33, "Sales / BD": 24, "Director": 9, "C-Suite / Founder": 7, "Regulatory / QA": 13}}, {"label": "Ghana", "slug": "ghana", "contacts": 309, "companies": 100, "email_count": 305, "verified_count": 305, "role_counts": {"Manager": 75, "Sales / BD": 33, "Director": 7, "Head": 9, "C-Suite / Founder": 8, "Regulatory / QA": 9, "Procurement / Purchase": 2}}, {"label": "Albania", "slug": "albania", "contacts": 283, "companies": 66, "email_count": 281, "verified_count": 281, "role_counts": {"Head": 7, "C-Suite / Founder": 12, "Manager": 63, "Sales / BD": 25, "Regulatory / QA": 21, "Director": 18, "Procurement / Purchase": 3}}, {"label": "Dubai", "slug": "dubai", "contacts": 231, "companies": 185, "email_count": 231, "verified_count": 231, "role_counts": {"C-Suite / Founder": 83, "Director": 148}}, {"label": "Bhutan & Brunei", "slug": "bhutan-brunei", "contacts": 160, "companies": 11, "email_count": 159, "verified_count": 159, "role_counts": {"Manager": 12, "Head": 2, "Procurement / Purchase": 2, "Regulatory / QA": 2, "C-Suite / Founder": 2}}, {"label": "Armenia", "slug": "armenia", "contacts": 141, "companies": 55, "email_count": 140, "verified_count": 140, "role_counts": {"C-Suite / Founder": 8, "Manager": 24, "Head": 11, "Director": 9, "Regulatory / QA": 5, "Sales / BD": 2}}, {"label": "Burkina Faso", "slug": "burkina-faso", "contacts": 81, "companies": 49, "email_count": 80, "verified_count": 80, "role_counts": {"Sales / BD": 2, "Manager": 11, "C-Suite / Founder": 1}}], "totals": {"total_contacts": 115664, "total_companies_sum": 115664, "unique_companies_global": 22806, "total_emails": 113429, "total_verified": 113026, "country_count": 56}, "top_companies_by_country": {"brazil": [{"n": "Hypermarcas S/A", "c": 261}, {"n": "—", "c": 97}, {"n": "Weleda do Brasil", "c": 96}, {"n": "Angelus Odonto", "c": 91}, {"n": "Farmabase Saúde Animal Ltda.", "c": 83}], "non-pharma": [{"n": "ACE Group", "c": 158}, {"n": "—", "c": 142}, {"n": "Angels", "c": 93}, {"n": "Arizton Advisory & Intelligence", "c": 41}, {"n": "Strelia", "c": 40}], "non-pharma-alt": [{"n": "Medochemie Ltd", "c": 104}, {"n": "Angels", "c": 79}, {"n": "Gulf Petrochemical Industries Co.", "c": 65}, {"n": "DRS Group", "c": 64}, {"n": "Papaellinas Group", "c": 62}], "argentina": [{"n": "Sinteplast", "c": 157}, {"n": "Maprimed S.A.", "c": 97}, {"n": "Brouwer S.A.", "c": 67}, {"n": "Gobbi Novag S.A.", "c": 58}, {"n": "GRUPO DISAL S.A", "c": 57}], "multiple-countries": [{"n": "Medochemie Ltd", "c": 218}, {"n": "EUROVAISTINĖ", "c": 129}, {"n": "Papaellinas Group", "c": 121}, {"n": "Gulf Petrochemical Industries Co.", "c": 115}, {"n": "Sued&Fargesa SRL", "c": 110}], "hong-kong": [{"n": "Hospital Authority", "c": 285}, {"n": "HUTCHMED", "c": 186}, {"n": "L'Oréal", "c": 169}, {"n": "BASF", "c": 139}, {"n": "The Estée Lauder Companies Inc.", "c": 126}], "italy": [{"n": "Mastek", "c": 205}, {"n": "—", "c": 18}, {"n": "PRC Ticinum Lab S.r.l.", "c": 16}, {"n": "Esperis S.p.A.", "c": 14}, {"n": "Giellepi SpA", "c": 14}], "purchasers-directors": [{"n": "ACDIMA International", "c": 24}, {"n": "Cruz Verde Colombia", "c": 23}, {"n": "Grupo Cimed", "c": 18}, {"n": "Libbs Farmacêutica", "c": 17}, {"n": "Laboratorio Elea", "c": 14}], "russia": [{"n": "BIOCAD", "c": 300}, {"n": "R-Pharm", "c": 204}, {"n": "Johnson & Johnson", "c": 132}, {"n": "Sanofi", "c": 130}, {"n": "AstraZeneca", "c": 104}], "china": [{"n": "AstraZeneca", "c": 78}, {"n": "HUTCHMED", "c": 60}, {"n": "Sanofi", "c": 59}, {"n": "Hengrui Pharma Co.,Ltd", "c": 58}, {"n": "Boehringer Ingelheim", "c": 44}], "singapore": [{"n": "SUMITOMO CHEMICAL ASIA PTE LTD", "c": 110}, {"n": "Menarini Asia-Pacific", "c": 101}, {"n": "The Polyolefin Company (Singapore) Pte Ltd", "c": 67}, {"n": "iNova Pharmaceuticals", "c": 63}, {"n": "Process Engineering Specialists", "c": 51}], "iran": [{"n": "CinnaGen", "c": 229}, {"n": "Orchid Pharmed", "c": 180}, {"n": "Actoverco", "c": 150}, {"n": "AryoGen Pharmed", "c": 133}, {"n": "NanoAlvand Pharmaceutical Co.", "c": 131}], "ecuador": [{"n": "Adium Ecuador", "c": 121}, {"n": "LIFE - Laboratorios Industriales Farmacéuticos Ecuatorianos", "c": 112}, {"n": "Laboratorios Bagó del Ecuador", "c": 103}, {"n": "Megalabs Ecuador", "c": 94}, {"n": "Grupo DIFARE", "c": 80}], "founders-pharma": [{"n": "—", "c": 10}, {"n": "Stallion Health UK Ltd", "c": 4}, {"n": "Mobelchem Specialty Pvt Ltd", "c": 3}, {"n": "GLOBAL SOLUTIONS", "c": 3}, {"n": "DailyDumbbell", "c": 3}], "egypt": [{"n": "BIC", "c": 148}, {"n": "Xeedia Pharma", "c": 64}, {"n": "Sovalue", "c": 54}, {"n": "Obegi Chemicals Group", "c": 43}, {"n": "Dulex Lab", "c": 40}], "mexico": [{"n": "BIC", "c": 148}, {"n": "Xeedia Pharma", "c": 64}, {"n": "Sovalue", "c": 54}, {"n": "Obegi Chemicals Group", "c": 43}, {"n": "Dulex Lab", "c": 40}], "croatia": [{"n": "PLIVA", "c": 594}, {"n": "JGL d.d.", "c": 175}, {"n": "Belupo", "c": 124}, {"n": "Oktal Pharma", "c": 90}, {"n": "Petrokemija d.d. Kutina", "c": 72}], "shanghai": [{"n": "AstraZeneca", "c": 78}, {"n": "HUTCHMED", "c": 60}, {"n": "Sanofi", "c": 59}, {"n": "Hengrui Pharma Co.,Ltd", "c": 58}, {"n": "Boehringer Ingelheim", "c": 44}], "indian-directors": [{"n": "Ephicacy", "c": 21}, {"n": "Azurity Pharmaceuticals", "c": 19}, {"n": "ADVANZ PHARMA", "c": 13}, {"n": "Jubilant Generics Limited", "c": 11}, {"n": "Sekhmet Pharmaventures", "c": 10}], "qatar": [{"n": "Al Ittihad Drug Store", "c": 70}, {"n": "Unicare Medical Trading LLC", "c": 62}, {"n": "Arabian Ethicals", "c": 61}, {"n": "New Country Healthcare", "c": 61}, {"n": "ADCANPharma", "c": 59}], "peru": [{"n": "Tecnofarma Perú", "c": 147}, {"n": "Laboratorios Portugal", "c": 96}, {"n": "Laboratorio Roxfarma", "c": 79}, {"n": "HERSIL S.A.", "c": 79}, {"n": "Laboratorios Biomont", "c": 68}], "bangladesh": [{"n": "Orion Pharma Ltd", "c": 112}, {"n": "Synovia Pharma", "c": 75}, {"n": "ACI HealthCare Limited", "c": 71}, {"n": "Labaid Pharmaceuticals Limited", "c": 53}, {"n": "Techno Drugs Ltd.", "c": 44}], "chile": [{"n": "Laboratorio Bagó de Chile S.A", "c": 124}, {"n": "Laboratorio Milab", "c": 101}, {"n": "Laboratorio Instituto Sanitas®", "c": 91}, {"n": "Laboratorio Maver S.A.", "c": 89}, {"n": "Itf-Labomed Farmacéutica Limitada", "c": 77}], "south-africa": [{"n": "Eurolab (Pty) Ltd.", "c": 23}, {"n": "OnQ Research", "c": 18}, {"n": "Cytespace Africa Laboratories", "c": 16}, {"n": "Melton Adhesives", "c": 15}, {"n": "DI Medicine Regulatory Consultants", "c": 15}], "jordan": [{"n": "Dar Al Dawa Development & Investment Co", "c": 248}, {"n": "Hayat Pharmaceutical Industries", "c": 71}, {"n": "Amman Pharmaceutical Industries", "c": 65}, {"n": "TQ Pharma", "c": 59}, {"n": "Joswe Medical", "c": 46}], "health-wellness": [{"n": "—", "c": 24}, {"n": "Stallion Health UK Ltd", "c": 5}, {"n": "Trawello Healthcare", "c": 4}, {"n": "Lami.fit", "c": 3}, {"n": "Spectrum Healthcare", "c": 3}], "bulgaria": [{"n": "Sopharma Trading Jsc", "c": 157}, {"n": "PHOENIX Pharma Bulgaria", "c": 87}, {"n": "Agropolychim AD", "c": 56}, {"n": "Huvepharma nv", "c": 54}, {"n": "Orgachim Jsc", "c": 48}], "world-importers-alt": [{"n": "DRS Group", "c": 66}, {"n": "Hayleys Aventura", "c": 60}, {"n": "Link Logistics", "c": 57}, {"n": "Maypro", "c": 51}, {"n": "Foodcom S.A.", "c": 49}], "saudi-arabia": [{"n": "Jamjoom Pharma", "c": 85}, {"n": "SPIMACO", "c": 70}, {"n": "Pfizer", "c": 54}, {"n": "Sanofi", "c": 51}, {"n": "Hikma Pharmaceuticals", "c": 50}], "turkey": [{"n": "Abdi Ibrahim Pharmaceuticals", "c": 257}, {"n": "Bionorica TR", "c": 22}, {"n": "IDEOGEN Turkey", "c": 16}, {"n": "İmuneks Farma", "c": 16}, {"n": "CORENA Pharmaceutical Wholesaler", "c": 14}], "nepal-sri-lanka": [{"n": "Sunshine Healthcare Lanka Ltd", "c": 98}, {"n": "Quest Pharmaceuticals Pvt. Ltd.", "c": 71}, {"n": "HAYCARB PLC", "c": 63}, {"n": "SUN PHARMA", "c": 60}, {"n": "Morison Limited", "c": 49}], "malaysia": [{"n": "EP Plus Group", "c": 59}, {"n": "Hoe Pharmaceuticals Sdn. Bhd.", "c": 45}, {"n": "Pharmaniaga", "c": 36}, {"n": "Novartis Malaysia", "c": 25}, {"n": "Ritma Prestasi", "c": 24}], "world-importers": [{"n": "DRS Group", "c": 57}, {"n": "Hayleys Aventura", "c": 55}, {"n": "Link Logistics", "c": 53}, {"n": "Foodcom S.A.", "c": 49}, {"n": "Quimica", "c": 42}], "lebanon": [{"n": "Benta Pharma Industries- BPI", "c": 101}, {"n": "Mersaco", "c": 95}, {"n": "Pharma Group Holding", "c": 44}, {"n": "UPO Union Pharmaceutique d'Orient s.a.l", "c": 36}, {"n": "Algorithm Pharmaceutical Manufacturers", "c": 31}], "uruguay": [{"n": "Megalabs", "c": 138}, {"n": "Urufarma", "c": 87}, {"n": "Adium", "c": 85}, {"n": "Megalabs Uruguay", "c": 83}, {"n": "Fármaco Uruguayo", "c": 79}], "costa-rica": [{"n": "Gutis", "c": 154}, {"n": "Grupo Farmanova Intermed", "c": 57}, {"n": "Laboratorios Stein - ahora SteinCares", "c": 41}, {"n": "Grupo Sur Química", "c": 40}, {"n": "Zepolab", "c": 29}], "indian-purchasers": [{"n": "Truemeds", "c": 11}, {"n": "Anupam Rasayan India Ltd", "c": 8}, {"n": "SimSon Pharma Limited", "c": 7}, {"n": "PlasmaGen BioSciences (P) Ltd", "c": 7}, {"n": "Akna Medical Pvt Ltd (Aknamed)", "c": 7}], "guatemala": [{"n": "Asofarma Centroamérica & Caribe", "c": 99}, {"n": "GRUPO LAMFER", "c": 86}, {"n": "Corporación Lancasco", "c": 62}, {"n": "Menarini Centroamérica y el Caribe", "c": 52}, {"n": "Farmamedica", "c": 32}], "morocco-senegal-togo": [{"n": "Sothema", "c": 176}, {"n": "Steripharma", "c": 53}, {"n": "Amanys Pharma (ex Saham Pharma)", "c": 47}, {"n": "PHI By Kelix bio", "c": 29}, {"n": "Laboratoire pharmaceutique NOVOPHARMA", "c": 27}], "algeria": [{"n": "Laboratoires BEKER®", "c": 94}, {"n": "Magpharm Laboratoires", "c": 81}, {"n": "LDM Groupe", "c": 70}, {"n": "Les Laboratoires INPHA-MédiS", "c": 40}, {"n": "Abdi Ibrahim Remede Pharma - AIRP", "c": 38}], "cameroon-burundi-latvia": [{"n": "Euroaptieka", "c": 37}, {"n": "Latvian Institute of Organic Synthesis", "c": 34}, {"n": "AS Kalceks", "c": 28}, {"n": "State Agency of Medicines of Latvia", "c": 26}, {"n": "Sanofi", "c": 24}], "botswana-angola": [{"n": "Shalina Healthcare", "c": 38}, {"n": "Bayer", "c": 28}, {"n": "Air Liquide", "c": 17}, {"n": "MCA", "c": 15}, {"n": "Basel Angola Sociedade De Detergentes, S.A", "c": 14}], "oman-somalia-yemen": [{"n": "National Pharmaceutical Industries Co (SAOC) - Oman", "c": 35}, {"n": "IBN SINA PHARMACY LLC", "c": 30}, {"n": "Oman Pharmaceutical Products", "c": 28}, {"n": "OMIFCO S.A.O.C", "c": 27}, {"n": "Oman Methanol Company LLC", "c": 25}], "tanzania": [{"n": "SICPA", "c": 46}, {"n": "MSD", "c": 29}, {"n": "Abacus Pharma (A) Limited", "c": 20}, {"n": "DSM Corridor Group (DCG)", "c": 19}, {"n": "BF SUMA Pharmaceuticals Inc", "c": 17}], "azerbaijan": [{"n": "Avromed Company CJSC", "c": 124}, {"n": "Zeytun Pharmaceuticals MMC", "c": 71}, {"n": "AzeriMed LLC", "c": 42}, {"n": "SOCAR Carbamide Plant", "c": 42}, {"n": "\"Azərsilah\" QSC / \"Azersilah\" CJSCo", "c": 25}], "indonesia": [{"n": "PT. Mecosin Indonesia", "c": 30}, {"n": "PT. Phytochemindo Reksa", "c": 16}, {"n": "PT Tiara Kencana", "c": 16}, {"n": "PT Sydna Farma", "c": 14}, {"n": "PT. Ekacitta Dian Persada", "c": 13}], "sudan": [{"n": "Hikma Pharmaceuticals", "c": 35}, {"n": "Abbott", "c": 26}, {"n": "Tabuk Pharmaceuticals Manufacturing Company", "c": 19}, {"n": "Ministry of Health", "c": 19}, {"n": "Bash Pharma Company Limited", "c": 13}], "panama-costa-rica-honduras": [{"n": "Zepolab", "c": 17}, {"n": "Kemical", "c": 13}, {"n": "IMFARSA", "c": 13}, {"n": "Laboratorios Andifar", "c": 12}, {"n": "Lisan S.A.", "c": 11}], "suriname-guyana-slovakia": [{"n": "Saneca Pharmaceuticals a.s.", "c": 60}, {"n": "HBM Pharma s.r.o.", "c": 22}, {"n": "UNIPHARMA - 1. slovenská lekárnická akciová spoločnosť", "c": 20}, {"n": "Schwabe Slovakia", "c": 11}, {"n": "MSD Slovensko", "c": 10}], "uganda": [{"n": "Quality Chemical Industries Limited", "c": 50}, {"n": "Abacus Pharma (A) Limited", "c": 34}, {"n": "BF SUMA Pharmaceuticals Inc", "c": 17}, {"n": "Abacus Parenteral Drugs Limited", "c": 14}, {"n": "Surgipharm", "c": 12}], "ghana": [{"n": "Kinapharma Limited", "c": 28}, {"n": "mPharma", "c": 27}, {"n": "Dannex Ayrton Starwin PLC", "c": 25}, {"n": "Shalina Healthcare", "c": 12}, {"n": "Novartis", "c": 11}], "albania": [{"n": "Profarma Sh.a", "c": 45}, {"n": "Delta Pharma Adria", "c": 33}, {"n": "CFO Pharma", "c": 24}, {"n": "Trimed Healthcare", "c": 23}, {"n": "eVita shpk", "c": 17}], "dubai": [{"n": "Fertiglobe", "c": 8}, {"n": "NewBridge Pharmaceuticals", "c": 8}, {"n": "Kyowa Kirin International plc.", "c": 6}, {"n": "Modern Pharmaceutical LLC", "c": 4}, {"n": "MSD GCC", "c": 4}], "bhutan-brunei": [{"n": "Brunei Fertilizer Industries Sdn Bhd", "c": 94}, {"n": "Brunei Methanol Company", "c": 46}, {"n": "Simpor Pharma Sdn Bhd", "c": 8}, {"n": "Polygel Organometallic (Brunei) Sdn Bhd", "c": 3}, {"n": "Azista Bhutan Healthcare Limited", "c": 3}], "armenia": [{"n": "Alfa Pharm", "c": 34}, {"n": "Gurus LLC", "c": 27}, {"n": "AZAD Pharma AG", "c": 10}, {"n": "NIZHPHARM Group", "c": 5}, {"n": "PharmaTech CJSC Armenia", "c": 4}], "burkina-faso": [{"n": "Air Liquide", "c": 9}, {"n": "Univers Bio-Médical", "c": 7}, {"n": "SOLEVO Group", "c": 6}, {"n": "MAXAM", "c": 4}, {"n": "Sanofi", "c": 3}]}};
+
+// Region classification (best-effort heuristic on slug/label)
+const REGIONS = {
+  asia: ['china','shanghai','hong-kong','singapore','malaysia','indonesia','bangladesh','nepal-sri-lanka','bhutan-brunei','indian-directors','indian-purchasers'],
+  latam: ['brazil','argentina','mexico','peru','chile','ecuador','uruguay','costa-rica','guatemala','panama-costa-rica-honduras','suriname-guyana-slovakia'],
+  mena: ['saudi-arabia','egypt','jordan','lebanon','iran','turkey','qatar','dubai','oman-somalia-yemen','morocco-senegal-togo','algeria'],
+  africa: ['south-africa','ghana','tanzania','uganda','sudan','botswana-angola','cameroon-burundi-latvia','burkina-faso'],
+  europe: ['italy','russia','croatia','bulgaria','albania','armenia','azerbaijan'],
+  segments: ['non-pharma','non-pharma-alt','world-importers','world-importers-alt','multiple-countries','purchasers-directors','founders-pharma','health-wellness','indian-directors','indian-purchasers']
+};
+
+const ROLE_COLORS = {
+  'Manager':              '#6366f1',
+  'C-Suite / Founder':    '#a855f7',
+  'Director':             '#22d3ee',
+  'Sales / BD':           '#10b981',
+  'Regulatory / QA':      '#f59e0b',
+  'Head':                 '#ec4899',
+  'Procurement / Purchase':'#f43f5e',
+  'VP':                   '#8b5cf6',
+};
+
+const AVATAR_GRADIENTS = [
+  'linear-gradient(135deg, #6366f1, #a855f7)',
+  'linear-gradient(135deg, #22d3ee, #6366f1)',
+  'linear-gradient(135deg, #10b981, #22d3ee)',
+  'linear-gradient(135deg, #f59e0b, #f43f5e)',
+  'linear-gradient(135deg, #ec4899, #8b5cf6)',
+  'linear-gradient(135deg, #f43f5e, #f59e0b)',
+  'linear-gradient(135deg, #8b5cf6, #ec4899)',
+  'linear-gradient(135deg, #06b6d4, #3b82f6)',
+];
+
+// ============ UTIL ============
+const fmt = (n) => new Intl.NumberFormat('en-US').format(n);
+const pct = (a, b) => b > 0 ? Math.round((a / b) * 100) : 0;
+
+function initials(name) {
+  return name.replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/).filter(Boolean).slice(0,2)
+    .map(w => w[0]).join('').toUpperCase() || '··';
+}
+
+function regionOf(slug) {
+  for (const [k, arr] of Object.entries(REGIONS)) if (arr.includes(slug)) return k;
+  return 'other';
+}
+
+// ============ RENDER ============
+function renderKPIs() {
+  const t = DATA.totals;
+  document.getElementById('kpiContacts').textContent = fmt(t.total_contacts);
+  document.getElementById('kpiCountries').textContent = t.country_count;
+  document.getElementById('kpiCompanies').textContent = fmt(t.unique_companies_global);
+  document.getElementById('kpiEmails').textContent = fmt(t.total_emails);
+  document.getElementById('kpiVerified').textContent = fmt(t.total_verified);
+  document.getElementById('emailPct').textContent = pct(t.total_emails, t.total_contacts) + '%';
+  document.getElementById('verifyPct').textContent = pct(t.total_verified, t.total_emails) + '%';
+  const top = DATA.countries[0];
+  document.getElementById('kpiTopMarket').textContent = top.label;
+  document.getElementById('kpiTopMarketSub').innerHTML = '<span class="up">' + fmt(top.contacts) + '</span> contacts';
+  document.getElementById('countryBadge').textContent = DATA.countries.length + ' markets';
+}
+
+function renderBarList() {
+  const list = document.getElementById('barList');
+  const max = DATA.countries[0].contacts;
+  const sorted = [...DATA.countries].sort((a,b) => b.contacts - a.contacts);
+  list.innerHTML = sorted.map((c, i) => {
+    const w = (c.contacts / max * 100).toFixed(1);
+    const isSpecial = /^[◆]/.test(c.label);
+    return `
+      <div class="bar-row ${isSpecial ? 'special' : ''}" data-slug="${c.slug}">
+        <div class="bar-rank">${String(i+1).padStart(2,'0')}</div>
+        <div class="bar-body">
+          <div class="bar-head">
+            <div class="bar-name">${c.label}</div>
+            <div class="bar-count">${fmt(c.contacts)}</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width: ${w}%"></div></div>
+        </div>
+        <div class="bar-meta">${fmt(c.companies)} co.</div>
+      </div>
+    `;
+  }).join('');
+  list.querySelectorAll('.bar-row').forEach(row => {
+    row.addEventListener('click', () => openDrawer(row.dataset.slug));
+  });
+}
+
+function renderDonut() {
+  const totals = {};
+  DATA.countries.forEach(c => {
+    for (const [r, n] of Object.entries(c.role_counts || {})) {
+      totals[r] = (totals[r] || 0) + n;
+    }
+  });
+  const sorted = Object.entries(totals).sort((a,b) => b[1] - a[1]);
+  const labels = sorted.map(([k]) => k);
+  const values = sorted.map(([,v]) => v);
+  const colors = labels.map(l => ROLE_COLORS[l] || '#64748b');
+  const total = values.reduce((a,b)=>a+b, 0);
+
+  document.getElementById('donutNum').textContent = fmt(total);
+
+  const ctx = document.getElementById('donut').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels, datasets: [{
+        data: values, backgroundColor: colors,
+        borderColor: '#0d1121', borderWidth: 3, hoverOffset: 10, spacing: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#141a2e',
+          borderColor: 'rgba(99, 102, 241, 0.3)', borderWidth: 1,
+          titleFont: { family: 'Inter', size: 12, weight: '600' },
+          bodyFont: { family: 'JetBrains Mono', size: 11 },
+          padding: 12, cornerRadius: 10,
+          callbacks: {
+            label: (ctx) => ` ${fmt(ctx.raw)} (${pct(ctx.raw, total)}%)`
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('roleLegend').innerHTML = sorted.map(([r, v]) => `
+    <div class="role-item">
+      <div class="role-dot" style="background: ${ROLE_COLORS[r] || '#64748b'}"></div>
+      <div class="role-info">
+        <div class="role-name">${r}</div>
+        <div class="role-count">${fmt(v)} · ${pct(v, total)}%</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCountryGrid(filter = 'all', query = '') {
+  const grid = document.getElementById('countryGrid');
+  const q = query.trim().toLowerCase();
+  let items = [...DATA.countries].sort((a,b) => b.contacts - a.contacts);
+  if (filter !== 'all') {
+    if (filter === 'top') items = items.slice(0, 10);
+    else items = items.filter(c => REGIONS[filter]?.includes(c.slug));
+  }
+  if (q) items = items.filter(c => c.label.toLowerCase().includes(q) || c.slug.includes(q));
+
+  document.getElementById('filteredBadge').textContent = items.length + ' showing';
+
+  if (items.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">No markets match — try a different query.</div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map((c, i) => {
+    const roles = Object.entries(c.role_counts || {}).sort((a,b)=>b[1]-a[1]);
+    const totalRoles = roles.reduce((a,b)=>a + b[1], 0);
+    const segs = roles.slice(0, 6).map(([k, v]) => {
+      const pct = totalRoles > 0 ? (v / totalRoles * 100) : 0;
+      return `<div class="cc-seg" style="width:${pct}%;background:${ROLE_COLORS[k] || '#64748b'}"></div>`;
+    }).join('');
+    const isSpecial = /^[◆]/.test(c.label);
+    const rankAll = DATA.countries.findIndex(x => x.slug === c.slug) + 1;
+    return `
+      <div class="country-card ${isSpecial ? 'special' : ''}" data-slug="${c.slug}">
+        <div class="cc-top">
+          <div class="cc-name">${c.label.replace('◆ ', '')}</div>
+          <div class="cc-rank">#${rankAll}</div>
+        </div>
+        <div class="cc-stats">
+          <div>
+            <div class="cc-stat-lbl">Contacts</div>
+            <div class="cc-stat-val">${fmt(c.contacts)}</div>
+          </div>
+          <div>
+            <div class="cc-stat-lbl">Companies</div>
+            <div class="cc-stat-val">${fmt(c.companies)}</div>
+          </div>
+        </div>
+        <div class="cc-bars">${segs}</div>
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.country-card').forEach(card => {
+    card.addEventListener('click', () => openDrawer(card.dataset.slug));
+  });
+}
+
+function renderTopCompanies() {
+  // Flatten all top_companies_by_country entries with country attribution
+  const bucket = [];
+  for (const [slug, list] of Object.entries(DATA.top_companies_by_country || {})) {
+    const country = DATA.countries.find(c => c.slug === slug);
+    if (!country) continue;
+    for (const co of list) {
+      if (!co.n || co.n === '—') continue;
+      bucket.push({ name: co.n, count: co.c, country: country.label, slug });
+    }
+  }
+  // Collapse duplicates by name (sum c; list countries)
+  const collapsed = new Map();
+  for (const b of bucket) {
+    if (!collapsed.has(b.name)) {
+      collapsed.set(b.name, { name: b.name, count: 0, countries: new Set() });
+    }
+    const e = collapsed.get(b.name);
+    e.count += b.count;
+    e.countries.add(b.country);
+  }
+  const top = [...collapsed.values()].sort((a,b) => b.count - a.count).slice(0, 24);
+
+  const html = top.map((co, i) => {
+    const grad = AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length];
+    const countriesArr = [...co.countries];
+    const countryStr = countriesArr.length > 2
+      ? countriesArr[0] + ' +' + (countriesArr.length - 1)
+      : countriesArr.join(' · ');
+    return `
+      <div class="company-card">
+        <div class="company-avatar" style="--c-grad: ${grad}">${initials(co.name)}</div>
+        <div class="company-body">
+          <div class="company-name">${co.name}</div>
+          <div class="company-country">${countryStr}</div>
+        </div>
+        <div class="company-count">${fmt(co.count)}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('companyGrid').innerHTML = html;
+}
+
+// ============ DRAWER ============
+function openDrawer(slug) {
+  const country = DATA.countries.find(c => c.slug === slug);
+  if (!country) return;
+  const topCos = (DATA.top_companies_by_country[slug] || []).filter(co => co.n && co.n !== '—');
+  const verifyRate = pct(country.verified_count, country.email_count);
+  const emailRate = pct(country.email_count, country.contacts);
+
+  const roles = Object.entries(country.role_counts || {}).sort((a,b)=>b[1]-a[1]);
+  const totalRoles = roles.reduce((a,b)=>a + b[1], 0);
+
+  document.getElementById('drawerTag').textContent = 'MARKET · ' + slug.toUpperCase();
+  document.getElementById('drawerTitle').textContent = country.label.replace('◆ ', '');
+
+  const body = document.getElementById('drawerBody');
+  body.innerHTML = `
+    <div class="d-kpi-row">
+      <div class="d-kpi"><div class="d-kpi-val">${fmt(country.contacts)}</div><div class="d-kpi-lbl">Contacts</div></div>
+      <div class="d-kpi"><div class="d-kpi-val">${fmt(country.companies)}</div><div class="d-kpi-lbl">Companies</div></div>
+      <div class="d-kpi"><div class="d-kpi-val">${fmt(country.email_count)}</div><div class="d-kpi-lbl">Emails</div></div>
+      <div class="d-kpi"><div class="d-kpi-val">${verifyRate}%</div><div class="d-kpi-lbl">Verified</div></div>
+    </div>
+
+    <div class="verify-ring">
+      <div style="position:relative;width:120px;height:120px;">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.06)" stroke-width="10" fill="none"/>
+          <circle cx="60" cy="60" r="52" stroke="url(#ring)" stroke-width="10" fill="none"
+            stroke-dasharray="${(verifyRate/100*326.7).toFixed(1)} 326.7"
+            stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <defs>
+            <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#10b981"/>
+              <stop offset="100%" stop-color="#22d3ee"/>
+            </linearGradient>
+          </defs>
+          <text x="60" y="62" text-anchor="middle" fill="#e7ebff" font-family="Space Grotesk" font-size="24" font-weight="700" letter-spacing="-0.02em">${verifyRate}%</text>
+          <text x="60" y="80" text-anchor="middle" fill="#8892b5" font-family="JetBrains Mono" font-size="8" letter-spacing="0.14em">VERIFIED</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--display);font-size:17px;font-weight:600;color:var(--text-hi);margin-bottom:6px;letter-spacing:-0.015em;">Email quality signal</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.5;">
+          <b style="color:var(--text)">${fmt(country.verified_count)}</b> of <b style="color:var(--text)">${fmt(country.email_count)}</b> emails verified as deliverable.
+          Email capture: <b style="color:var(--emerald)">${emailRate}%</b> of contacts.
+        </div>
+      </div>
+    </div>
+
+    <div class="d-section-title">Role Distribution <span style="font-weight:400;color:var(--dim);">${fmt(totalRoles)} tagged</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${roles.map(([r, v]) => {
+        const p = totalRoles > 0 ? (v / totalRoles * 100) : 0;
+        return `
+          <div style="display:grid;grid-template-columns:140px 1fr 60px;gap:12px;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);">
+            <div style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:3px;background:${ROLE_COLORS[r] || '#64748b'};flex-shrink:0"></span>${r}</div>
+            <div style="height:5px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${p}%;background:${ROLE_COLORS[r] || '#64748b'};border-radius:999px;"></div></div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--text);text-align:right;">${fmt(v)}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    ${topCos.length ? `
+      <div class="d-section-title">Top Companies</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${topCos.map((co, i) => `
+          <div class="company-card" style="background:rgba(99,102,241,0.04)">
+            <div class="company-avatar" style="--c-grad: ${AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length]}">${initials(co.n)}</div>
+            <div class="company-body"><div class="company-name">${co.n}</div><div class="company-country">Rank #${i+1} in market</div></div>
+            <div class="company-count">${fmt(co.c)}</div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+  `;
+
+  document.getElementById('drawer').classList.add('active');
+  document.getElementById('backdrop').classList.add('active');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('active');
+  document.getElementById('backdrop').classList.remove('active');
+}
+
+// ============ EVENTS ============
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const active = document.querySelector('.filter-btn.active').dataset.filter;
+  renderCountryGrid(active, e.target.value);
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const q = document.getElementById('searchInput').value;
+    renderCountryGrid(btn.dataset.filter, q);
+  });
+});
+
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('backdrop').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+// ============ BOOT ============
+function setDates() {
+  const now = new Date();
+  const opts = { year: 'numeric', month: 'short', day: '2-digit' };
+  const s = now.toLocaleDateString('en-US', opts).toUpperCase();
+  document.getElementById('dateStamp').textContent = 'ATLAS · ' + s;
+  document.getElementById('footerDate').textContent = s;
+}
+
+function boot() {
+  if (!DATA) {
+    document.body.innerHTML = '<div style="padding:60px;color:#f43f5e;font-family:monospace;">Data failed to load. Check embedded JSON.</div>';
+    return;
+  }
+  setDates();
+  renderKPIs();
+  renderBarList();
+  renderDonut();
+  renderCountryGrid();
+  renderTopCompanies();
+}
+boot();
+</script>
+</body>
+</html>
