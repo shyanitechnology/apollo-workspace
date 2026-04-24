@@ -1283,6 +1283,57 @@ html, body {
   color: var(--dim);
 }
 
+/* Company-grouped pipeline card (new) */
+.pipe-card.is-company { cursor: default; padding: 10px 12px; }
+.pipe-card.is-company:hover { transform: none; background: var(--bg-2); border-color: var(--border); }
+.pipe-card-co-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-bottom: 2px;
+}
+.pipe-card-co-name {
+  font-size: 13px; font-weight: 700; color: var(--text-hi);
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+.pipe-card-co-count {
+  background: var(--bg-3); border: 1px solid var(--border-hi);
+  padding: 1px 7px; border-radius: 10px;
+  font-size: 10.5px; font-weight: 600; color: var(--muted);
+  font-family: var(--mono); flex-shrink: 0;
+}
+.pipe-card-co-country {
+  font-family: var(--mono);
+  font-size: 9.5px; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.pipe-card-people-list {
+  display: flex; flex-direction: column; gap: 1px;
+  border-top: 1px solid var(--border);
+  padding-top: 5px; margin: 0 -6px;
+}
+.pipe-card-person {
+  padding: 5px 8px; border-radius: 5px;
+  cursor: pointer; transition: background 0.12s;
+  display: flex; flex-direction: column; gap: 1px;
+  min-width: 0;
+}
+.pipe-card-person:hover { background: rgba(99,102,241,0.09); }
+.pipe-card-person-name {
+  font-size: 12px; color: var(--text); font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pipe-card-person-em {
+  font-size: 10.5px; color: var(--dim); font-family: var(--mono);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pipe-card-person-icons {
+  display: inline-flex; gap: 4px; margin-left: 6px;
+  vertical-align: middle;
+}
+.pipe-card-person .rem-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+.pipe-card-person .rem-dot.overdue { background: var(--rose); animation: ping 2s infinite; }
+
 /* ============ REMINDERS ============ */
 .rem-root {
   display: flex;
@@ -3835,13 +3886,33 @@ function renderPipeline() {
       if (r) { buckets[e.status].push({ r, c: e }); totals[e.status]++; }
     }
   }
-  for (const k of Object.keys(buckets)) {
-    buckets[k].sort((a, b) => {
+
+  // Group each stage's contacts by company name
+  const grouped = {};
+  for (const s of STAGES) {
+    const key = s.key;
+    const map = new Map();
+    for (const item of buckets[key]) {
+      const coName = (item.r.c || '').trim() || '(No company)';
+      if (!map.has(coName)) map.set(coName, { name: coName, items: [], country: item.r.co || '', lastActivity: '' });
+      const g = map.get(coName);
+      g.items.push(item);
+      const t = item.c.activities?.[0]?.ts || '';
+      if (t > g.lastActivity) g.lastActivity = t;
+    }
+    // Sort companies: most members first, then most recent activity
+    grouped[key] = [...map.values()].sort((a, b) => {
+      if (b.items.length !== a.items.length) return b.items.length - a.items.length;
+      return b.lastActivity.localeCompare(a.lastActivity);
+    });
+    // Sort people within each company by most recent activity
+    grouped[key].forEach(g => g.items.sort((a, b) => {
       const ta = a.c.activities?.[0]?.ts || '';
       const tb = b.c.activities?.[0]?.ts || '';
       return tb.localeCompare(ta);
-    });
+    }));
   }
+
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
   const won = totals.won, lost = totals.lost;
   const winRate = (won + lost) > 0 ? Math.round(won / (won + lost) * 100) : 0;
@@ -3851,37 +3922,48 @@ function renderPipeline() {
     <div class="pipe-stat"><b>${fmt(lost)}</b> lost</div>
     <div class="pipe-stat">Win rate · <b>${winRate}%</b></div>
     <div class="view-spacer"></div>
-    <div style="font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:0.08em;">Click any card to open · stages update from drawer</div>
+    <div style="font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:0.08em;">Grouped by company · click a person to open</div>
   `;
-  $('pipeBoard').innerHTML = STAGES.map(s => `
-    <div class="pipe-col" style="--st-color:${s.color};">
-      <div class="pipe-col-head">
-        <div class="pipe-col-title">${s.label}</div>
-        <div class="pipe-col-count">${fmt(totals[s.key])}</div>
+
+  $('pipeBoard').innerHTML = STAGES.map(s => {
+    const companies = grouped[s.key];
+    const peopleCount = totals[s.key];
+    const colBody = companies.length === 0
+      ? '<div style="color:var(--dim);font-size:11px;text-align:center;padding:20px 10px;font-style:italic;">No contacts</div>'
+      : companies.map(g => {
+          const peopleHtml = g.items.map(({ r, c }) => {
+            const rem = c.reminder?.date;
+            const actCount = (c.activities || []).length;
+            return `
+              <div class="pipe-card-person" data-id="${r.id}">
+                <div class="pipe-card-person-name">${escapeHtml(r.n) || '—'}${rem || actCount ? `<span class="pipe-card-person-icons">${rem ? `<span class="rem-dot${new Date(rem) < new Date() ? ' overdue' : ''}" title="Reminder ${fmtDateTime(rem)}"></span>` : ''}${actCount ? `<span style="font-family:var(--mono);font-size:10px;color:var(--dim);">${actCount}</span>` : ''}</span>` : ''}</div>
+                ${r.em ? `<div class="pipe-card-person-em">${escapeHtml(r.em)}</div>` : ''}
+              </div>
+            `;
+          }).join('');
+          return `
+            <div class="pipe-card is-company" style="--st-color:${s.color}">
+              <div class="pipe-card-co-head">
+                <div class="pipe-card-co-name" title="${escapeHtml(g.name)}">${escapeHtml(g.name)}</div>
+                <div class="pipe-card-co-count">${g.items.length}</div>
+              </div>
+              ${g.country ? `<div class="pipe-card-co-country">${escapeHtml(g.country)}</div>` : ''}
+              <div class="pipe-card-people-list">${peopleHtml}</div>
+            </div>
+          `;
+        }).join('');
+    return `
+      <div class="pipe-col" style="--st-color:${s.color};">
+        <div class="pipe-col-head">
+          <div class="pipe-col-title">${s.label}</div>
+          <div class="pipe-col-count">${fmt(peopleCount)}</div>
+        </div>
+        <div class="pipe-col-list">${colBody}</div>
       </div>
-      <div class="pipe-col-list">
-        ${buckets[s.key].length === 0
-          ? '<div style="color:var(--dim);font-size:11px;text-align:center;padding:20px 10px;font-style:italic;">No contacts</div>'
-          : buckets[s.key].map(({ r, c }) => {
-              const rem = c.reminder?.date;
-              return `
-                <div class="pipe-card" style="--st-color:${s.color}" data-id="${r.id}">
-                  <div class="pipe-card-name">${escapeHtml(r.n) || '—'}</div>
-                  <div class="pipe-card-company">${escapeHtml(r.c) || '—'}${r.em ? ' · ' + escapeHtml(r.em) : ''}</div>
-                  <div class="pipe-card-meta">
-                    <span class="pipe-card-country">${escapeHtml(r.co)}</span>
-                    <span class="pipe-card-icons">
-                      ${rem ? `<span class="rem-dot${new Date(rem) < new Date() ? ' overdue' : ''}" title="Reminder ${fmtDateTime(rem)}"></span>` : ''}
-                      ${(c.activities || []).length > 0 ? `<span style="font-family:var(--mono);font-size:10px;">${c.activities.length}</span>` : ''}
-                    </span>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-      </div>
-    </div>
-  `).join('');
-  $('pipeBoard').querySelectorAll('.pipe-card').forEach(el => {
+    `;
+  }).join('');
+
+  $('pipeBoard').querySelectorAll('.pipe-card-person').forEach(el => {
     el.addEventListener('click', () => openDetail(+el.dataset.id));
   });
 }
