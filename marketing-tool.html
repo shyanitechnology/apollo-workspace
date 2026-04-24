@@ -1886,37 +1886,98 @@ html, body {
 }
 .compose-overlay.open { display: flex; }
 .compose-modal {
-  width: 100%; max-width: 640px;
-  background: #0d1121; border: 1px solid #1c2440; border-radius: 16px;
+  width: 100%; max-width: 680px;
+  background: #0d1121; border: 1px solid #1c2440; border-radius: 14px;
   box-shadow: 0 40px 100px rgba(0,0,0,.6);
   overflow: hidden; display: flex; flex-direction: column;
   max-height: calc(100vh - 60px);
 }
 .compose-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px; border-bottom: 1px solid #1c2440;
+  padding: 12px 18px; background: #141a2e; border-bottom: 1px solid #1c2440;
 }
-.compose-title { font-size: 15px; font-weight: 600; }
+.compose-title { font-size: 13px; font-weight: 600; color: #e5e7eb; letter-spacing: .02em; }
 .compose-close {
   background: transparent; border: none; color: #94a3b8;
   font-size: 22px; line-height: 1; cursor: pointer;
   width: 28px; height: 28px; border-radius: 6px;
 }
-.compose-close:hover { background: #141a2e; color: white; }
-.compose-body { padding: 14px 20px; overflow-y: auto; flex: 1; }
-.compose-field {
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid #1c2440; padding: 8px 0;
+.compose-close:hover { background: #1c2440; color: white; }
+.compose-body { padding: 4px 18px 10px; overflow-y: auto; flex: 1; }
+
+/* Gmail-style recipient row */
+.compose-row {
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid #1c2440;
+  padding: 8px 0; min-height: 42px;
 }
-.compose-field label {
-  width: 52px; font-size: 12px; color: #94a3b8;
+.compose-row > label {
+  width: 44px; font-size: 12px; color: #94a3b8;
   font-weight: 500; flex-shrink: 0;
 }
-.compose-field input {
-  flex: 1; background: transparent; border: none; color: #e5e7eb;
-  font-size: 13px; padding: 4px 0; outline: none;
+.chip-field {
+  flex: 1; display: flex; flex-wrap: wrap;
+  align-items: center; gap: 4px; min-height: 28px;
+  cursor: text;
 }
-.compose-tabs { display: flex; gap: 4px; margin: 14px 0 10px; border-bottom: 1px solid #1c2440; }
+.chip-field input {
+  flex: 1; min-width: 180px; background: transparent; border: none;
+  color: #e5e7eb; font-size: 13px; padding: 4px 0; outline: none;
+}
+.cc-bcc-toggle { display: flex; gap: 2px; flex-shrink: 0; }
+.cc-bcc-toggle button {
+  background: transparent; border: none; color: #94a3b8;
+  padding: 4px 8px; font-size: 12px; font-weight: 500;
+  cursor: pointer; border-radius: 6px;
+}
+.cc-bcc-toggle button:hover { color: #e5e7eb; background: #141a2e; }
+.cc-bcc-toggle button.active { color: #6366f1; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #1c2440; border: 1px solid #2a3452; border-radius: 16px;
+  padding: 2px 4px 2px 10px;
+  font-size: 12px; color: #e5e7eb;
+  max-width: 100%;
+  transition: background .12s, border-color .12s;
+}
+.chip:hover { background: #2a3452; border-color: #3d4a6e; }
+.chip.invalid { background: rgba(244, 63, 94, 0.14); border-color: #f43f5e; color: #fecdd3; }
+.chip-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-caret, .chip-x {
+  background: transparent; border: none; color: #94a3b8;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px; line-height: 1;
+}
+.chip-caret { font-size: 11px; }
+.chip-caret:hover, .chip-x:hover { background: #3d4a6e; color: white; }
+.chip-x { font-size: 16px; }
+
+.chip-menu {
+  position: fixed; z-index: 10002;
+  background: #141a2e; border: 1px solid #2a3452; border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.5);
+  padding: 4px; min-width: 150px;
+}
+.chip-menu button {
+  display: block; width: 100%; text-align: left;
+  background: transparent; border: none; color: #e5e7eb;
+  padding: 8px 12px; font-size: 12px; cursor: pointer; border-radius: 4px;
+}
+.chip-menu button:hover:not(:disabled) { background: #1c2440; }
+.chip-menu button:disabled { opacity: .4; cursor: default; }
+.chip-menu button.danger { color: #f87171; }
+.chip-menu button.danger:hover { background: rgba(244, 63, 94, 0.1); }
+.chip-menu-sep { height: 1px; background: #2a3452; margin: 4px 0; }
+
+.subject-row input {
+  flex: 1; background: transparent; border: none; color: #e5e7eb;
+  font-size: 14px; font-weight: 500; padding: 4px 0; outline: none;
+}
+.subject-row input::placeholder { color: #64748b; }
+
+.compose-tabs { display: flex; gap: 4px; margin: 10px 0 8px; border-bottom: 1px solid #1c2440; }
 .compose-tab {
   background: transparent; border: none; color: #94a3b8;
   padding: 8px 14px; font-size: 12px; font-weight: 500;
@@ -1925,10 +1986,11 @@ html, body {
 .compose-tab.active { color: #e5e7eb; border-bottom-color: #6366f1; }
 .compose-tab:hover { color: #e5e7eb; }
 .compose-panel textarea {
-  width: 100%; min-height: 180px; box-sizing: border-box;
+  width: 100%; min-height: 200px; box-sizing: border-box;
   background: #141a2e; border: 1px solid #1c2440; border-radius: 8px;
   color: #e5e7eb; padding: 12px; font-size: 13px;
   font-family: inherit; resize: vertical; outline: none;
+  line-height: 1.5;
 }
 .compose-panel textarea:focus { border-color: #6366f1; }
 .html-drop {
@@ -1958,29 +2020,35 @@ html, body {
 .html-preview iframe { width: 100%; height: 260px; border: none; display: block; }
 .compose-foot {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 20px; border-top: 1px solid #1c2440; gap: 12px;
+  padding: 12px 18px; border-top: 1px solid #1c2440; gap: 12px;
+  background: #0a0e1c;
 }
 .compose-status { font-size: 11px; color: #94a3b8; flex: 1; line-height: 1.4; }
 .compose-actions { display: flex; gap: 8px; }
 .compose-btn-sec, .compose-btn-pri {
-  padding: 8px 16px; border-radius: 8px;
-  font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+  padding: 9px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none;
 }
 .compose-btn-sec { background: transparent; color: #94a3b8; border: 1px solid #1c2440; }
 .compose-btn-sec:hover { background: #141a2e; color: #e5e7eb; }
-.compose-btn-pri { background: #6366f1; color: white; }
+.compose-btn-pri { background: #6366f1; color: white; display: inline-flex; align-items: center; gap: 6px; }
 .compose-btn-pri:hover { background: #4f46e5; }
 .compose-btn-pri:disabled { opacity: .5; cursor: not-allowed; }
 .compose-toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
   background: #0d1121; border: 1px solid #1c2440; color: #e5e7eb;
   padding: 12px 18px; border-radius: 10px; font-size: 13px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 10001;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 10003;
   opacity: 0; pointer-events: none; transition: opacity .2s;
+  max-width: 440px;
 }
 .compose-toast.show { opacity: 1; }
 .compose-toast.ok { border-color: #10b981; }
 .compose-toast.err { border-color: #f43f5e; }
+.compose-fallback {
+  display: inline-block; color: #6366f1; text-decoration: underline;
+  margin-left: 4px; cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -4150,33 +4218,53 @@ loadData();
 <div class="compose-overlay" id="composeOverlay" aria-hidden="true">
   <div class="compose-modal" role="dialog" aria-label="Compose email">
     <div class="compose-head">
-      <div class="compose-title">New email</div>
+      <div class="compose-title">New message</div>
       <button class="compose-close" id="composeClose" aria-label="Close">&times;</button>
     </div>
     <div class="compose-body">
-      <div class="compose-field">
-        <label for="composeTo">To</label>
-        <input type="text" id="composeTo" placeholder="name@example.com, another@example.com">
+
+      <!-- To row with Cc/Bcc toggle -->
+      <div class="compose-row" id="toRow">
+        <label>To</label>
+        <div class="chip-field" data-field="to">
+          <input type="text" placeholder="Recipients">
+        </div>
+        <div class="cc-bcc-toggle">
+          <button type="button" data-show="cc">Cc</button>
+          <button type="button" data-show="bcc">Bcc</button>
+        </div>
       </div>
-      <div class="compose-field">
-        <label for="composeCc">Cc</label>
-        <input type="text" id="composeCc" placeholder="optional">
+
+      <!-- Cc row (hidden until toggled) -->
+      <div class="compose-row" id="ccRow" style="display:none">
+        <label>Cc</label>
+        <div class="chip-field" data-field="cc">
+          <input type="text" placeholder="">
+        </div>
       </div>
-      <div class="compose-field">
-        <label for="composeBcc">Bcc</label>
-        <input type="text" id="composeBcc" placeholder="optional">
+
+      <!-- Bcc row (hidden until toggled) -->
+      <div class="compose-row" id="bccRow" style="display:none">
+        <label>Bcc</label>
+        <div class="chip-field" data-field="bcc">
+          <input type="text" placeholder="">
+        </div>
       </div>
-      <div class="compose-field">
-        <label for="composeSubject">Subject</label>
-        <input type="text" id="composeSubject" placeholder="">
+
+      <!-- Subject row -->
+      <div class="compose-row subject-row">
+        <input type="text" id="composeSubject" placeholder="Subject">
       </div>
+
       <div class="compose-tabs" role="tablist">
-        <button class="compose-tab active" data-ctab="text" type="button">Plain text</button>
+        <button class="compose-tab active" data-ctab="text" type="button">Write</button>
         <button class="compose-tab" data-ctab="html" type="button">HTML file</button>
       </div>
+
       <div class="compose-panel" data-panel="text">
-        <textarea id="composeBody" placeholder="Write your message…"></textarea>
+        <textarea id="composeBody" placeholder="Your message…"></textarea>
       </div>
+
       <div class="compose-panel" data-panel="html" style="display:none">
         <div class="html-drop" id="htmlDrop">
           <input type="file" id="htmlFile" accept=".html,.htm,text/html" style="display:none">
@@ -4195,10 +4283,13 @@ loadData();
       </div>
     </div>
     <div class="compose-foot">
-      <div class="compose-status" id="composeStatus">Opens Gmail in a new tab. Close the tab without sending to save as a draft.</div>
+      <div class="compose-status" id="composeStatus">Opens Gmail in a new tab with fields pre-filled. Close the tab without sending to save as draft.</div>
       <div class="compose-actions">
         <button class="compose-btn-sec" id="composeCancel" type="button">Cancel</button>
-        <button class="compose-btn-pri" id="composeSend" type="button">Open in Gmail</button>
+        <button class="compose-btn-pri" id="composeSend" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Open in Gmail
+        </button>
       </div>
     </div>
   </div>
@@ -4207,54 +4298,261 @@ loadData();
 
 <script>
 (function () {
-  const overlay  = document.getElementById('composeOverlay');
-  const openBtn  = document.getElementById('composeBtn');
-  const closeBtn = document.getElementById('composeClose');
-  const cancel   = document.getElementById('composeCancel');
-  const sendBtn  = document.getElementById('composeSend');
-  const toEl     = document.getElementById('composeTo');
-  const ccEl     = document.getElementById('composeCc');
-  const bccEl    = document.getElementById('composeBcc');
-  const subjEl   = document.getElementById('composeSubject');
-  const bodyEl   = document.getElementById('composeBody');
-  const tabs     = document.querySelectorAll('.compose-tab');
-  const panels   = document.querySelectorAll('.compose-panel');
-  const drop     = document.getElementById('htmlDrop');
-  const fileInput= document.getElementById('htmlFile');
-  const preview  = document.getElementById('htmlPreview');
+  const overlay    = document.getElementById('composeOverlay');
+  const openBtn    = document.getElementById('composeBtn');
+  const closeBtn   = document.getElementById('composeClose');
+  const cancelBtn  = document.getElementById('composeCancel');
+  const sendBtn    = document.getElementById('composeSend');
+  const subjEl     = document.getElementById('composeSubject');
+  const bodyEl     = document.getElementById('composeBody');
+  const tabs       = document.querySelectorAll('.compose-tab');
+  const panels     = document.querySelectorAll('.compose-panel');
+  const drop       = document.getElementById('htmlDrop');
+  const fileInput  = document.getElementById('htmlFile');
+  const preview    = document.getElementById('htmlPreview');
   const previewFrame = document.getElementById('htmlPreviewFrame');
-  const fileName = document.getElementById('htmlFileName');
-  const clearBtn = document.getElementById('htmlClear');
-  const statusEl = document.getElementById('composeStatus');
-  const toastEl  = document.getElementById('composeToast');
+  const fileName   = document.getElementById('htmlFileName');
+  const clearBtn   = document.getElementById('htmlClear');
+  const toastEl    = document.getElementById('composeToast');
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const recipients = { to: [], cc: [], bcc: [] };
   let mode = 'text';
   let htmlContent = null;
+  let lastAutoGreeting = '';
 
-  function open() {
+  // ---------- Modal open/close ----------
+  function openModal() {
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
-    setTimeout(() => toEl.focus(), 50);
+    setTimeout(() => document.querySelector('.chip-field[data-field="to"] input').focus(), 50);
   }
-  function close() {
+  function closeModal() {
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
+    closeChipMenu();
   }
-  function toast(msg, type) {
-    toastEl.textContent = msg;
-    toastEl.className = 'compose-toast show ' + (type || '');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => toastEl.classList.remove('show'), 3500);
-  }
-
-  openBtn.addEventListener('click', open);
-  closeBtn.addEventListener('click', close);
-  cancel.addEventListener('click', close);
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
   });
 
+  // ---------- Toast ----------
+  function toast(msg, type, durationMs) {
+    toastEl.innerHTML = msg;
+    toastEl.className = 'compose-toast show ' + (type || '');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), durationMs || 4000);
+  }
+
+  // ---------- Name derivation & greeting ----------
+  function deriveName(email) {
+    const local = (email.split('@')[0] || '').toString();
+    if (!local) return '';
+    const parts = local
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .split(/[.\-_+]+/)
+      .map(p => p.replace(/\d+/g, '').trim())
+      .filter(Boolean);
+    if (!parts.length) return '';
+    return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(' ');
+  }
+
+  function buildGreeting(emails) {
+    const names = emails.map(deriveName).filter(Boolean);
+    if (!names.length) return '';
+    if (names.length === 1) return 'Dear ' + names[0] + ',\n\n';
+    if (names.length === 2) return 'Dear ' + names[0] + ' and ' + names[1] + ',\n\n';
+    return 'Dear ' + names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] + ',\n\n';
+  }
+
+  function updateGreeting() {
+    if (mode !== 'text') return;
+    const newGreeting = buildGreeting(recipients.to);
+    const current = bodyEl.value;
+    // Replace only if body is empty OR still starts with the previous auto-greeting
+    if (current === '' || (lastAutoGreeting && current.startsWith(lastAutoGreeting))) {
+      bodyEl.value = newGreeting + current.slice(lastAutoGreeting.length);
+      lastAutoGreeting = newGreeting;
+    } else {
+      // User has edited — track new greeting but don't overwrite
+      lastAutoGreeting = newGreeting;
+    }
+  }
+
+  // ---------- Chip rendering ----------
+  function renderField(field) {
+    const container = document.querySelector('.chip-field[data-field="' + field + '"]');
+    const input = container.querySelector('input');
+    container.querySelectorAll('.chip').forEach(c => c.remove());
+    recipients[field].forEach(email => {
+      const chip = createChip(field, email);
+      container.insertBefore(chip, input);
+    });
+  }
+  function renderAll() { renderField('to'); renderField('cc'); renderField('bcc'); }
+
+  function createChip(field, email) {
+    const chip = document.createElement('span');
+    chip.className = 'chip' + (EMAIL_RE.test(email) ? '' : ' invalid');
+    chip.dataset.email = email;
+    chip.dataset.field = field;
+    const emailSpan = document.createElement('span');
+    emailSpan.className = 'chip-email';
+    emailSpan.textContent = email;
+    chip.appendChild(emailSpan);
+    const caret = document.createElement('button');
+    caret.type = 'button';
+    caret.className = 'chip-caret';
+    caret.setAttribute('aria-label', 'Options');
+    caret.textContent = '▾';
+    caret.addEventListener('click', e => { e.stopPropagation(); openChipMenu(chip, field, email); });
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'chip-x';
+    x.setAttribute('aria-label', 'Remove');
+    x.textContent = '×';
+    x.addEventListener('click', e => { e.stopPropagation(); removeRecipient(field, email); });
+    chip.appendChild(caret);
+    chip.appendChild(x);
+    return chip;
+  }
+
+  // ---------- Chip menu (move / remove) ----------
+  function openChipMenu(chip, field, email) {
+    closeChipMenu();
+    const menu = document.createElement('div');
+    menu.className = 'chip-menu';
+    const opts = [
+      { field: 'to',  label: 'Move to To' },
+      { field: 'cc',  label: 'Move to Cc' },
+      { field: 'bcc', label: 'Move to Bcc' }
+    ];
+    opts.forEach(o => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = o.label;
+      if (o.field === field) b.disabled = true;
+      b.addEventListener('click', () => {
+        moveRecipient(field, o.field, email);
+        closeChipMenu();
+      });
+      menu.appendChild(b);
+    });
+    const sep = document.createElement('div');
+    sep.className = 'chip-menu-sep';
+    menu.appendChild(sep);
+    const rm = document.createElement('button');
+    rm.type = 'button';
+    rm.className = 'danger';
+    rm.textContent = 'Remove';
+    rm.addEventListener('click', () => { removeRecipient(field, email); closeChipMenu(); });
+    menu.appendChild(rm);
+
+    const rect = chip.getBoundingClientRect();
+    menu.style.left = Math.min(rect.left, window.innerWidth - 170) + 'px';
+    menu.style.top  = (rect.bottom + 4) + 'px';
+    document.body.appendChild(menu);
+    setTimeout(() => document.addEventListener('click', onOutsideMenuClick, { once: true, capture: true }), 0);
+  }
+  function onOutsideMenuClick(e) {
+    if (!e.target.closest('.chip-menu')) closeChipMenu();
+    else setTimeout(() => document.addEventListener('click', onOutsideMenuClick, { once: true, capture: true }), 0);
+  }
+  function closeChipMenu() {
+    document.querySelectorAll('.chip-menu').forEach(m => m.remove());
+  }
+
+  // ---------- Recipient operations ----------
+  function addRecipient(field, rawEmail) {
+    const email = rawEmail.trim();
+    if (!email) return false;
+    // Remove from any field first (prevents duplicates across fields)
+    ['to', 'cc', 'bcc'].forEach(f => {
+      recipients[f] = recipients[f].filter(e => e.toLowerCase() !== email.toLowerCase());
+    });
+    recipients[field].push(email);
+    renderAll();
+    if (field === 'to') updateGreeting();
+    return true;
+  }
+  function removeRecipient(field, email) {
+    recipients[field] = recipients[field].filter(e => e !== email);
+    renderField(field);
+    if (field === 'to') updateGreeting();
+  }
+  function moveRecipient(fromField, toField, email) {
+    if (fromField === toField) return;
+    recipients[fromField] = recipients[fromField].filter(e => e !== email);
+    if (!recipients[toField].some(e => e.toLowerCase() === email.toLowerCase())) {
+      recipients[toField].push(email);
+    }
+    renderAll();
+    if (fromField === 'to' || toField === 'to') updateGreeting();
+    // Auto-reveal Cc/Bcc row if we're moving into it
+    if (toField === 'cc' || toField === 'bcc') {
+      const row = document.getElementById(toField + 'Row');
+      if (row.style.display === 'none') row.style.display = 'flex';
+    }
+  }
+
+  // ---------- Input wiring ----------
+  function consumeInput(field, input) {
+    const raw = input.value;
+    if (!raw.trim()) return;
+    const parts = raw.split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
+    parts.forEach(p => addRecipient(field, p));
+    input.value = '';
+  }
+
+  ['to', 'cc', 'bcc'].forEach(field => {
+    const container = document.querySelector('.chip-field[data-field="' + field + '"]');
+    const input = container.querySelector('input');
+    container.addEventListener('click', e => {
+      if (e.target === container || e.target.classList.contains('chip-field')) input.focus();
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',' || e.key === ';' || e.key === 'Tab') {
+        if (input.value.trim()) {
+          e.preventDefault();
+          consumeInput(field, input);
+        }
+      } else if (e.key === 'Backspace' && !input.value && recipients[field].length) {
+        const last = recipients[field].pop();
+        renderField(field);
+        if (field === 'to') updateGreeting();
+      }
+    });
+    input.addEventListener('blur', () => {
+      if (input.value.trim()) consumeInput(field, input);
+    });
+    input.addEventListener('paste', e => {
+      // Let paste happen, then split on next tick
+      setTimeout(() => {
+        if (input.value.match(/[,;\s]/)) consumeInput(field, input);
+      }, 0);
+    });
+  });
+
+  // ---------- Cc/Bcc reveal toggles ----------
+  document.querySelectorAll('.cc-bcc-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.show;
+      const row = document.getElementById(which + 'Row');
+      const visible = row.style.display !== 'none';
+      row.style.display = visible ? 'none' : 'flex';
+      btn.classList.toggle('active', !visible);
+      if (!visible) {
+        setTimeout(() => row.querySelector('input').focus(), 0);
+      }
+    });
+  });
+
+  // ---------- Tab switch ----------
   tabs.forEach(t => t.addEventListener('click', () => {
     tabs.forEach(x => x.classList.remove('active'));
     t.classList.add('active');
@@ -4262,6 +4560,7 @@ loadData();
     panels.forEach(p => p.style.display = p.dataset.panel === mode ? '' : 'none');
   }));
 
+  // ---------- HTML file upload ----------
   function loadHtml(file) {
     if (!file) return;
     const reader = new FileReader();
@@ -4291,13 +4590,7 @@ loadData();
     fileInput.value = '';
   });
 
-  function validEmails(str) {
-    if (!str) return [];
-    return str.split(/[,;\s]+/).map(s => s.trim()).filter(s =>
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
-    );
-  }
-
+  // ---------- Clipboard ----------
   async function copyHtmlToClipboard(html) {
     try {
       const blob = new Blob([html], { type: 'text/html' });
@@ -4313,44 +4606,78 @@ loadData();
     }
   }
 
-  sendBtn.addEventListener('click', async () => {
-    const to   = validEmails(toEl.value);
-    const cc   = validEmails(ccEl.value);
-    const bcc  = validEmails(bccEl.value);
-    const subj = subjEl.value.trim();
+  // ---------- Gmail URL build + open ----------
+  function buildGmailUrl() {
+    // Flush any pending typed input
+    ['to', 'cc', 'bcc'].forEach(field => {
+      const input = document.querySelector('.chip-field[data-field="' + field + '"] input');
+      if (input.value.trim()) consumeInput(field, input);
+    });
 
-    if (to.length === 0) { toast('Please add at least one valid recipient in To', 'err'); toEl.focus(); return; }
-
-    sendBtn.disabled = true;
+    const validTo  = recipients.to.filter(e => EMAIL_RE.test(e));
+    const validCc  = recipients.cc.filter(e => EMAIL_RE.test(e));
+    const validBcc = recipients.bcc.filter(e => EMAIL_RE.test(e));
 
     const params = new URLSearchParams();
     params.set('view', 'cm');
     params.set('fs', '1');
-    params.set('to', to.join(','));
-    if (cc.length)  params.set('cc', cc.join(','));
-    if (bcc.length) params.set('bcc', bcc.join(','));
-    if (subj)       params.set('su', subj);
+    params.set('tf', '1');
+    if (validTo.length)  params.set('to',  validTo.join(','));
+    if (validCc.length)  params.set('cc',  validCc.join(','));
+    if (validBcc.length) params.set('bcc', validBcc.join(','));
+    if (subjEl.value.trim()) params.set('su', subjEl.value.trim());
+    if (mode === 'text' && bodyEl.value) params.set('body', bodyEl.value);
 
-    if (mode === 'text') {
-      const body = bodyEl.value;
-      if (body) params.set('body', body);
-      window.open('https://mail.google.com/mail/?' + params.toString(), '_blank', 'noopener');
-      toast('Gmail opened — review and send.', 'ok');
-      close();
-    } else {
-      if (!htmlContent) {
-        toast('Please upload an HTML file first', 'err');
-        sendBtn.disabled = false;
-        return;
-      }
-      const ok = await copyHtmlToClipboard(htmlContent);
-      window.open('https://mail.google.com/mail/?' + params.toString(), '_blank', 'noopener');
-      if (ok) toast('HTML copied — press Ctrl+V in the Gmail body.', 'ok');
-      else    toast('Gmail opened, but clipboard copy failed. Paste HTML manually.', 'err');
-      close();
+    return { url: 'https://mail.google.com/mail/?' + params.toString(), to: validTo };
+  }
+
+  function openInNewTab(url) {
+    // Try window.open (uses user activation)
+    const win = window.open(url, '_blank');
+    if (win && !win.closed) return true;
+    // Fallback: programmatic anchor click
+    const a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return true;
+  }
+
+  sendBtn.addEventListener('click', async () => {
+    const { url, to } = buildGmailUrl();
+    if (to.length === 0) {
+      toast('Please add at least one valid recipient in <b>To</b>', 'err');
+      document.querySelector('.chip-field[data-field="to"] input').focus();
+      return;
     }
-    sendBtn.disabled = false;
+    if (mode === 'html' && !htmlContent) {
+      toast('Please upload an HTML file or switch to <b>Write</b> tab', 'err');
+      return;
+    }
+
+    // IMPORTANT: open window synchronously (user activation) BEFORE any await
+    const opened = openInNewTab(url);
+    if (!opened) {
+      toast(
+        'Your browser blocked the popup. <a class="compose-fallback" href="' + url + '" target="_blank" rel="noopener">Click here to open Gmail.</a>',
+        'err', 8000
+      );
+      return;
+    }
+
+    if (mode === 'html' && htmlContent) {
+      const ok = await copyHtmlToClipboard(htmlContent);
+      if (ok) toast('Gmail opened. HTML copied — paste with <b>Ctrl+V</b> in the body.', 'ok', 6000);
+      else    toast('Gmail opened, but clipboard copy failed. Paste HTML manually.', 'err', 6000);
+    } else {
+      toast('Gmail opened — review and send.', 'ok');
+    }
+    closeModal();
   });
+
+  // ---------- Reset modal on re-open ----------
+  // (uncomment to reset every time; currently we preserve state across opens)
 })();
 </script>
 </body>
