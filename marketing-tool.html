@@ -1452,6 +1452,7 @@ html, body {
 .rem-info { min-width: 0; }
 .rem-info .name { font-weight: 600; color: var(--text-hi); font-size: 13.5px; }
 .rem-info .context { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
+.rem-info .rem-web { color: var(--indigo); font-family: var(--mono); font-weight: 500; }
 .rem-info .note {
   color: var(--text);
   font-size: 12px;
@@ -4108,22 +4109,43 @@ function renderReminders() {
   });
 }
 
+function reminderWebsite(r) {
+  if (!r || !r.em) return '';
+  const m = r.em.match(/@([^@\s]+)$/);
+  if (!m) return '';
+  const domain = m[1].toLowerCase().trim();
+  if (GENERIC_DOMAINS.has(domain)) return '';
+  return domain.replace(/^www\./i, '');
+}
+
 function renderReminderCard(item, bucket) {
   const r = item.r;
   const d = new Date(item.reminder.date);
   const monthShort = d.toLocaleDateString('en-US', { month: 'short' });
   const cls = bucket === 'overdue' ? 'overdue' : bucket === 'today' ? 'today' : '';
   const st = STAGE_MAP[item.status];
+
+  const companyName = (r.c || '').trim();
+  const personName  = (r.n || '').trim();
+  const primary     = companyName || personName || '—';
+  const website     = reminderWebsite(r);
+
+  const contextBits = [];
+  if (website)   contextBits.push(`<span class="rem-web">${escapeHtml(website)}</span>`);
+  if (companyName && personName) contextBits.push(escapeHtml(personName));
+  if (r.co)      contextBits.push(escapeHtml(r.co));
+  contextBits.push(`${fmtDateTime(item.reminder.date)} (${fmtDate(item.reminder.date)})`);
+
   return `
     <div class="rem-card ${cls}" data-id="${item.id}">
       <div class="rem-date-block">
         <div class="d">${d.getDate()}</div>
         <div class="m">${monthShort}</div>
       </div>
-      <div class="avatar">${initials(r.n)}</div>
+      <div class="avatar">${initials(primary)}</div>
       <div class="rem-info">
-        <div class="name">${escapeHtml(r.n) || '—'} ${st ? `<span class="status-pill" style="color:${st.color};background:${st.color}22;vertical-align:middle;margin-left:6px;">${st.label}</span>` : ''}</div>
-        <div class="context">${escapeHtml(r.c) || '—'} · ${escapeHtml(r.co)} · ${fmtDateTime(item.reminder.date)} (${fmtDate(item.reminder.date)})</div>
+        <div class="name">${escapeHtml(primary)} ${st ? `<span class="status-pill" style="color:${st.color};background:${st.color}22;vertical-align:middle;margin-left:6px;">${st.label}</span>` : ''}</div>
+        <div class="context">${contextBits.join(' · ')}</div>
         ${item.reminder.note ? `<div class="note">${escapeHtml(item.reminder.note)}</div>` : ''}
       </div>
       <div class="rem-actions">
