@@ -56,7 +56,11 @@
         .gate-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
         .gate-card { width:100%; max-width:420px; background:#0d1121; border:1px solid #1c2440;
           border-radius:16px; padding:36px 32px; box-shadow:0 30px 80px rgba(0,0,0,.5); }
-        .gate-title { font-size:22px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em; }
+        .gate-logo { display:flex; justify-content:center; margin-bottom:16px; }
+        .gate-logo img { width:64px; height:64px; object-fit:contain;
+          background:#ffffff; border-radius:16px; padding:8px; box-sizing:border-box;
+          box-shadow:0 8px 24px rgba(20,184,184,.25); }
+        .gate-title { font-size:22px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em; text-align:center; }
         .gate-sub { color:#94a3b8; font-size:13px; margin:0 0 24px; }
         .gate-field { margin-bottom:14px; }
         .gate-label { display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; font-weight:500; }
@@ -77,8 +81,9 @@
       wrap.className = 'gate-wrap';
       wrap.innerHTML = `
         <form class="gate-card" id="gate-form" autocomplete="off">
-          <h1 class="gate-title">Apollo Workbench</h1>
-          <p class="gate-sub">Sign in to continue.</p>
+          <div class="gate-logo"><img src="/logo.png" alt="Valencia"></div>
+          <h1 class="gate-title">Valencia Data Base</h1>
+          <p class="gate-sub" style="text-align:center">Sign in to continue.</p>
           <div class="gate-field">
             <label class="gate-label" for="gate-user">Email</label>
             <input class="gate-input" id="gate-user" type="email" required autofocus>

@@ -7,7 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 <script src="/supabase-config.js"></script>
 <script src="/auth.js"></script>
-<title>Apollo Workbench · Launch</title>
+<title>Valencia Data Base · Launch</title>
+<link rel="icon" type="image/png" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -104,10 +105,12 @@ body {
 .brand-logo {
   width: 56px; height: 56px;
   border-radius: 15px;
-  background: var(--grad);
+  background: #ffffff;
   display: grid; place-items: center;
-  box-shadow: 0 8px 28px rgba(168, 85, 247, 0.35);
+  padding: 6px; box-sizing: border-box;
+  box-shadow: 0 8px 28px rgba(20, 184, 184, 0.28);
 }
+.brand-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .brand-text .name {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 22px;
@@ -247,12 +250,10 @@ body {
   <div class="brand-row">
     <div class="brand">
       <div class="brand-logo">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
+        <img src="/logo.png" alt="Valencia">
       </div>
       <div class="brand-text">
-        <div class="name">Apollo Workbench</div>
+        <div class="name">Valencia Data Base</div>
         <div class="tag">Global Lead Atlas · CRM</div>
       </div>
     </div>
