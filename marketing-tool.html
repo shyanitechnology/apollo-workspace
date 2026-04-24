@@ -1864,6 +1864,123 @@ html, body {
   .table-row > :nth-child(4),
   .table-row > :nth-child(6) { display: none; }
 }
+
+/* ============ COMPOSE EMAIL ============ */
+.compose-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; margin-right: 10px;
+  background: #6366f1; color: white;
+  border: none; border-radius: 8px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.compose-btn:hover { background: #4f46e5; }
+.compose-btn svg { width: 14px; height: 14px; }
+
+.compose-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7, 9, 18, 0.75);
+  backdrop-filter: blur(4px);
+  display: none; align-items: flex-start; justify-content: center;
+  z-index: 10000; padding: 40px 20px 20px; overflow-y: auto;
+}
+.compose-overlay.open { display: flex; }
+.compose-modal {
+  width: 100%; max-width: 640px;
+  background: #0d1121; border: 1px solid #1c2440; border-radius: 16px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.6);
+  overflow: hidden; display: flex; flex-direction: column;
+  max-height: calc(100vh - 60px);
+}
+.compose-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid #1c2440;
+}
+.compose-title { font-size: 15px; font-weight: 600; }
+.compose-close {
+  background: transparent; border: none; color: #94a3b8;
+  font-size: 22px; line-height: 1; cursor: pointer;
+  width: 28px; height: 28px; border-radius: 6px;
+}
+.compose-close:hover { background: #141a2e; color: white; }
+.compose-body { padding: 14px 20px; overflow-y: auto; flex: 1; }
+.compose-field {
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid #1c2440; padding: 8px 0;
+}
+.compose-field label {
+  width: 52px; font-size: 12px; color: #94a3b8;
+  font-weight: 500; flex-shrink: 0;
+}
+.compose-field input {
+  flex: 1; background: transparent; border: none; color: #e5e7eb;
+  font-size: 13px; padding: 4px 0; outline: none;
+}
+.compose-tabs { display: flex; gap: 4px; margin: 14px 0 10px; border-bottom: 1px solid #1c2440; }
+.compose-tab {
+  background: transparent; border: none; color: #94a3b8;
+  padding: 8px 14px; font-size: 12px; font-weight: 500;
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.compose-tab.active { color: #e5e7eb; border-bottom-color: #6366f1; }
+.compose-tab:hover { color: #e5e7eb; }
+.compose-panel textarea {
+  width: 100%; min-height: 180px; box-sizing: border-box;
+  background: #141a2e; border: 1px solid #1c2440; border-radius: 8px;
+  color: #e5e7eb; padding: 12px; font-size: 13px;
+  font-family: inherit; resize: vertical; outline: none;
+}
+.compose-panel textarea:focus { border-color: #6366f1; }
+.html-drop {
+  border: 2px dashed #1c2440; border-radius: 10px;
+  padding: 28px 20px; text-align: center;
+  background: #0a0e1c; transition: border-color .15s, background .15s;
+}
+.html-drop.dragover { border-color: #6366f1; background: rgba(99,102,241,.06); }
+.html-drop-text { font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+.html-drop-text strong { color: #e5e7eb; font-weight: 600; }
+.html-drop-link { color: #6366f1; text-decoration: underline; cursor: pointer; }
+.html-drop-hint { font-size: 11px; color: #64748b; }
+.html-preview {
+  border: 1px solid #1c2440; border-radius: 10px;
+  overflow: hidden; background: #ffffff;
+}
+.html-preview-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #141a2e; border-bottom: 1px solid #1c2440;
+  font-size: 12px; color: #94a3b8;
+}
+.html-clear {
+  background: transparent; border: 1px solid #1c2440; color: #94a3b8;
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;
+}
+.html-clear:hover { background: #f43f5e; color: white; border-color: #f43f5e; }
+.html-preview iframe { width: 100%; height: 260px; border: none; display: block; }
+.compose-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; border-top: 1px solid #1c2440; gap: 12px;
+}
+.compose-status { font-size: 11px; color: #94a3b8; flex: 1; line-height: 1.4; }
+.compose-actions { display: flex; gap: 8px; }
+.compose-btn-sec, .compose-btn-pri {
+  padding: 8px 16px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+}
+.compose-btn-sec { background: transparent; color: #94a3b8; border: 1px solid #1c2440; }
+.compose-btn-sec:hover { background: #141a2e; color: #e5e7eb; }
+.compose-btn-pri { background: #6366f1; color: white; }
+.compose-btn-pri:hover { background: #4f46e5; }
+.compose-btn-pri:disabled { opacity: .5; cursor: not-allowed; }
+.compose-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #0d1121; border: 1px solid #1c2440; color: #e5e7eb;
+  padding: 12px 18px; border-radius: 10px; font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 10001;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.compose-toast.show { opacity: 1; }
+.compose-toast.ok { border-color: #10b981; }
+.compose-toast.err { border-color: #f43f5e; }
 </style>
 </head>
 <body>
@@ -1895,6 +2012,10 @@ html, body {
       <span class="search-shortcut">⌘K</span>
     </div>
     <div class="top-actions">
+      <button class="compose-btn" id="composeBtn" title="Compose email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Compose</span>
+      </button>
       <nav class="page-nav">
         <a class="page-nav-btn" href="./index.html" title="Home · pick a tool">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -4023,6 +4144,214 @@ setInterval(() => {
 
 // ============ BOOT ============
 loadData();
+</script>
+
+<!-- ============ COMPOSE EMAIL MODAL ============ -->
+<div class="compose-overlay" id="composeOverlay" aria-hidden="true">
+  <div class="compose-modal" role="dialog" aria-label="Compose email">
+    <div class="compose-head">
+      <div class="compose-title">New email</div>
+      <button class="compose-close" id="composeClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="compose-body">
+      <div class="compose-field">
+        <label for="composeTo">To</label>
+        <input type="text" id="composeTo" placeholder="name@example.com, another@example.com">
+      </div>
+      <div class="compose-field">
+        <label for="composeCc">Cc</label>
+        <input type="text" id="composeCc" placeholder="optional">
+      </div>
+      <div class="compose-field">
+        <label for="composeBcc">Bcc</label>
+        <input type="text" id="composeBcc" placeholder="optional">
+      </div>
+      <div class="compose-field">
+        <label for="composeSubject">Subject</label>
+        <input type="text" id="composeSubject" placeholder="">
+      </div>
+      <div class="compose-tabs" role="tablist">
+        <button class="compose-tab active" data-ctab="text" type="button">Plain text</button>
+        <button class="compose-tab" data-ctab="html" type="button">HTML file</button>
+      </div>
+      <div class="compose-panel" data-panel="text">
+        <textarea id="composeBody" placeholder="Write your message…"></textarea>
+      </div>
+      <div class="compose-panel" data-panel="html" style="display:none">
+        <div class="html-drop" id="htmlDrop">
+          <input type="file" id="htmlFile" accept=".html,.htm,text/html" style="display:none">
+          <div class="html-drop-text">
+            <strong>Drop an HTML file here</strong> or <label for="htmlFile" class="html-drop-link">browse</label>
+          </div>
+          <div class="html-drop-hint">HTML is copied to your clipboard — paste into Gmail's body with Ctrl+V.</div>
+        </div>
+        <div class="html-preview" id="htmlPreview" style="display:none">
+          <div class="html-preview-head">
+            <span id="htmlFileName"></span>
+            <button class="html-clear" id="htmlClear" type="button">Remove</button>
+          </div>
+          <iframe id="htmlPreviewFrame" sandbox="allow-same-origin"></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="compose-foot">
+      <div class="compose-status" id="composeStatus">Opens Gmail in a new tab. Close the tab without sending to save as a draft.</div>
+      <div class="compose-actions">
+        <button class="compose-btn-sec" id="composeCancel" type="button">Cancel</button>
+        <button class="compose-btn-pri" id="composeSend" type="button">Open in Gmail</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="compose-toast" id="composeToast"></div>
+
+<script>
+(function () {
+  const overlay  = document.getElementById('composeOverlay');
+  const openBtn  = document.getElementById('composeBtn');
+  const closeBtn = document.getElementById('composeClose');
+  const cancel   = document.getElementById('composeCancel');
+  const sendBtn  = document.getElementById('composeSend');
+  const toEl     = document.getElementById('composeTo');
+  const ccEl     = document.getElementById('composeCc');
+  const bccEl    = document.getElementById('composeBcc');
+  const subjEl   = document.getElementById('composeSubject');
+  const bodyEl   = document.getElementById('composeBody');
+  const tabs     = document.querySelectorAll('.compose-tab');
+  const panels   = document.querySelectorAll('.compose-panel');
+  const drop     = document.getElementById('htmlDrop');
+  const fileInput= document.getElementById('htmlFile');
+  const preview  = document.getElementById('htmlPreview');
+  const previewFrame = document.getElementById('htmlPreviewFrame');
+  const fileName = document.getElementById('htmlFileName');
+  const clearBtn = document.getElementById('htmlClear');
+  const statusEl = document.getElementById('composeStatus');
+  const toastEl  = document.getElementById('composeToast');
+
+  let mode = 'text';
+  let htmlContent = null;
+
+  function open() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    setTimeout(() => toEl.focus(), 50);
+  }
+  function close() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  function toast(msg, type) {
+    toastEl.textContent = msg;
+    toastEl.className = 'compose-toast show ' + (type || '');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 3500);
+  }
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  cancel.addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    mode = t.dataset.ctab;
+    panels.forEach(p => p.style.display = p.dataset.panel === mode ? '' : 'none');
+  }));
+
+  function loadHtml(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      htmlContent = String(e.target.result || '');
+      fileName.textContent = file.name;
+      drop.style.display = 'none';
+      preview.style.display = '';
+      previewFrame.srcdoc = htmlContent;
+    };
+    reader.readAsText(file);
+  }
+  fileInput.addEventListener('change', e => loadHtml(e.target.files[0]));
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault();
+    drop.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if (f && /\.html?$/i.test(f.name)) loadHtml(f);
+    else toast('Please drop an .html file', 'err');
+  });
+  clearBtn.addEventListener('click', () => {
+    htmlContent = null; fileName.textContent = '';
+    preview.style.display = 'none';
+    drop.style.display = '';
+    fileInput.value = '';
+  });
+
+  function validEmails(str) {
+    if (!str) return [];
+    return str.split(/[,;\s]+/).map(s => s.trim()).filter(s =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+    );
+  }
+
+  async function copyHtmlToClipboard(html) {
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const textBlob = new Blob([html.replace(/<[^>]+>/g, ' ')], { type: 'text/plain' });
+      const item = new ClipboardItem({ 'text/html': blob, 'text/plain': textBlob });
+      await navigator.clipboard.write([item]);
+      return true;
+    } catch (err) {
+      try {
+        await navigator.clipboard.writeText(html);
+        return true;
+      } catch { return false; }
+    }
+  }
+
+  sendBtn.addEventListener('click', async () => {
+    const to   = validEmails(toEl.value);
+    const cc   = validEmails(ccEl.value);
+    const bcc  = validEmails(bccEl.value);
+    const subj = subjEl.value.trim();
+
+    if (to.length === 0) { toast('Please add at least one valid recipient in To', 'err'); toEl.focus(); return; }
+
+    sendBtn.disabled = true;
+
+    const params = new URLSearchParams();
+    params.set('view', 'cm');
+    params.set('fs', '1');
+    params.set('to', to.join(','));
+    if (cc.length)  params.set('cc', cc.join(','));
+    if (bcc.length) params.set('bcc', bcc.join(','));
+    if (subj)       params.set('su', subj);
+
+    if (mode === 'text') {
+      const body = bodyEl.value;
+      if (body) params.set('body', body);
+      window.open('https://mail.google.com/mail/?' + params.toString(), '_blank', 'noopener');
+      toast('Gmail opened — review and send.', 'ok');
+      close();
+    } else {
+      if (!htmlContent) {
+        toast('Please upload an HTML file first', 'err');
+        sendBtn.disabled = false;
+        return;
+      }
+      const ok = await copyHtmlToClipboard(htmlContent);
+      window.open('https://mail.google.com/mail/?' + params.toString(), '_blank', 'noopener');
+      if (ok) toast('HTML copied — press Ctrl+V in the Gmail body.', 'ok');
+      else    toast('Gmail opened, but clipboard copy failed. Paste HTML manually.', 'err');
+      close();
+    }
+    sendBtn.disabled = false;
+  });
+})();
 </script>
 </body>
 </html>
