@@ -828,6 +828,169 @@ html, body {
 /* Compose modal sizing */
 .compose-modal { width: min(720px, 96vw); max-height: 92vh; }
 
+/* Recipient chip rows */
+.send-mode-row { margin-bottom: 14px; }
+.send-mode-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.send-mode-toggle label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text);
+  cursor: pointer;
+}
+.send-mode-toggle label input { margin-top: 2px; flex-shrink: 0; }
+.send-mode-toggle label em {
+  font-style: normal;
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-left: 4px;
+}
+.send-mode-toggle code {
+  background: var(--bg-3);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--cyan);
+}
+.recip-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.chip-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px dashed transparent;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  min-height: 50px;
+}
+.chip-row.drag-over {
+  border-color: var(--indigo);
+  background: rgba(99, 102, 241, 0.08);
+}
+.chip-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.chip-row-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.chip-row[data-field="to"] .chip-row-label { color: var(--indigo); }
+.chip-row-count {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg-3);
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 6px;
+  color: var(--text);
+}
+.chip-row-count.zero { opacity: 0.4; }
+.chip-row-hint {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  color: var(--dim);
+  font-weight: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 28px;
+  padding: 2px 0;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 10px;
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--text-hi);
+  cursor: grab;
+  user-select: none;
+  transition: all 0.1s ease;
+  max-width: 280px;
+}
+.chip:hover {
+  background: rgba(99, 102, 241, 0.22);
+  border-color: var(--border-hi);
+}
+.chip:active { cursor: grabbing; }
+.chip.dragging { opacity: 0.4; }
+.chip-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+.chip-em {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.chip-x {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 4px;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.chip-x:hover { background: rgba(244, 63, 94, 0.2); color: var(--rose); }
+.chip-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-hi);
+  font-family: var(--sans);
+  font-size: 12px;
+  outline: none;
+}
+.chip-input:focus { border-color: var(--indigo); }
+
 /* Settings modal */
 .settings-modal { width: min(560px, 96vw); max-height: 92vh; }
 .warn-banner {
@@ -2500,7 +2663,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.4-smtp-pill-topbar · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.5-recipient-chips-drag · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2557,19 +2720,40 @@ html, body {
       </div>
     </div>
 
-    <div class="field-group">
-      <label class="field-label">To <span style="color:var(--emerald);font-weight:600;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:11px;margin-left:6px;" id="recipientHint">0 emails selected</span></label>
-      <div class="field-hint">Selected from the list. Each contact gets its own personalised email when "Send via SMTP" is used.</div>
+    <div class="field-group send-mode-row">
+      <label class="field-label">Send mode</label>
+      <div class="send-mode-toggle">
+        <label><input type="radio" name="sendMode" value="each" checked><span>Send each individually <em>(personalised — each recipient gets their own email)</em></span></label>
+        <label><input type="radio" name="sendMode" value="combined"><span>Send one combined email <em>(everyone in TO sees everyone else; <code>{{name}}</code> becomes a comma list)</em></span></label>
+      </div>
     </div>
 
-    <div class="field-group">
-      <label class="field-label">CC (optional, comma-separated)</label>
-      <input class="field-input" id="composeCc" placeholder="manager@yourdomain.com, team@yourdomain.com">
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">BCC (optional, comma-separated — applies to every send)</label>
-      <input class="field-input" id="composeBcc" placeholder="archive@yourdomain.com">
+    <div class="field-group recip-block">
+      <div class="chip-row" data-field="to">
+        <div class="chip-row-head">
+          <span class="chip-row-label">TO <span class="chip-row-count" id="toCount">0</span></span>
+          <span class="chip-row-hint">drag chips to other fields · paste emails to add</span>
+        </div>
+        <div class="chip-container" id="toChips" data-target="to"></div>
+        <input class="chip-input" id="toChipInput" placeholder="Add email and press Enter, comma, or space…" autocomplete="off">
+      </div>
+      <div class="chip-row" data-field="cc">
+        <div class="chip-row-head">
+          <span class="chip-row-label">CC <span class="chip-row-count" id="ccCount">0</span></span>
+        </div>
+        <div class="chip-container" id="ccChips" data-target="cc"></div>
+        <input class="chip-input" id="ccChipInput" placeholder="Add CC email…" autocomplete="off">
+      </div>
+      <div class="chip-row" data-field="bcc">
+        <div class="chip-row-head">
+          <span class="chip-row-label">BCC <span class="chip-row-count" id="bccCount">0</span></span>
+        </div>
+        <div class="chip-container" id="bccChips" data-target="bcc"></div>
+        <input class="chip-input" id="bccChipInput" placeholder="Add BCC email…" autocomplete="off">
+      </div>
+      <input id="composeCc" type="hidden">
+      <input id="composeBcc" type="hidden">
+      <span id="recipientHint" style="display:none;">0 emails selected</span>
     </div>
 
     <div class="field-group">
@@ -3436,6 +3620,178 @@ const SEED_KEY = 'apollo_default_tpl_seeded_v1';
 function loadTemplates() { return JSON.parse(localStorage.getItem(TPL_KEY) || '{}'); }
 function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
 
+// ============ RECIPIENT CHIPS (TO / CC / BCC) ============
+// Chips track full contact info per email so {{name}} {{company}} variables work.
+// Drag-and-drop between fields. Manually-typed emails get minimal { em } objects.
+const recipState = { to: [], cc: [], bcc: [] };
+
+function emailIsValid(em) {
+  return /^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test((em || '').trim());
+}
+function findContactByEmail(em) {
+  const low = (em || '').toLowerCase();
+  return state.contacts.find(r => (r.em || '').toLowerCase() === low);
+}
+function chipFromEmail(em, displayName) {
+  const c = findContactByEmail(em);
+  if (c) return { id: c.id, em: c.em, n: c.n, c: c.c, co: c.co, t: c.t };
+  return { em: em.trim(), n: displayName || em.trim() };
+}
+
+function renderRecipChips() {
+  for (const field of ['to', 'cc', 'bcc']) {
+    const list = recipState[field];
+    const container = document.getElementById(field + 'Chips');
+    if (!container) continue;
+    container.innerHTML = list.map(r => `
+      <div class="chip" draggable="true" data-em="${escapeAttr(r.em)}" data-field="${field}" title="${escapeAttr(r.em)}">
+        <span class="chip-name">${escapeHtml(r.n || r.em.split('@')[0])}</span>
+        <span class="chip-em">${escapeHtml(r.em)}</span>
+        <button type="button" class="chip-x" data-rm="${escapeAttr(r.em)}" data-field="${field}" title="Remove">×</button>
+      </div>
+    `).join('');
+    const cnt = document.getElementById(field + 'Count');
+    if (cnt) {
+      cnt.textContent = list.length;
+      cnt.classList.toggle('zero', list.length === 0);
+    }
+  }
+  // Sync hidden composeCc/Bcc fields for any code paths that still read them
+  $('composeCc').value  = recipState.cc.map(r => r.em).join(', ');
+  $('composeBcc').value = recipState.bcc.map(r => r.em).join(', ');
+  // Wire chip events (delegated)
+}
+
+function chipAdd(field, recipient) {
+  if (!recipient || !recipient.em) return;
+  // Dedupe across all fields
+  for (const f of ['to', 'cc', 'bcc']) {
+    recipState[f] = recipState[f].filter(r => r.em.toLowerCase() !== recipient.em.toLowerCase());
+  }
+  recipState[field].push(recipient);
+  renderRecipChips();
+}
+function chipRemove(field, em) {
+  recipState[field] = recipState[field].filter(r => r.em.toLowerCase() !== em.toLowerCase());
+  renderRecipChips();
+}
+function chipMove(em, fromField, toField) {
+  if (fromField === toField) return;
+  const idx = recipState[fromField].findIndex(r => r.em.toLowerCase() === em.toLowerCase());
+  if (idx === -1) return;
+  const [r] = recipState[fromField].splice(idx, 1);
+  recipState[toField].push(r);
+  renderRecipChips();
+}
+
+// Initialise from main-table selection
+function recipsFromSelection() {
+  recipState.to = getSelectedRecords().filter(r => r.em).map(r => ({
+    id: r.id, em: r.em, n: r.n, c: r.c, co: r.co, t: r.t,
+  }));
+  recipState.cc = [];
+  recipState.bcc = [];
+  renderRecipChips();
+}
+
+// Event delegation for chip clicks (X button) and drag/drop
+function wireRecipChipEvents() {
+  ['to', 'cc', 'bcc'].forEach(field => {
+    const row = document.querySelector('.chip-row[data-field="' + field + '"]');
+    if (!row) return;
+    const container = document.getElementById(field + 'Chips');
+    const input = document.getElementById(field + 'ChipInput');
+
+    // Remove via × button
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-rm]');
+      if (!btn) return;
+      chipRemove(btn.dataset.field, btn.dataset.rm);
+    });
+
+    // Drag start on chip
+    container.addEventListener('dragstart', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', JSON.stringify({ em: chip.dataset.em, from: chip.dataset.field }));
+    });
+    container.addEventListener('dragend', (e) => {
+      const chip = e.target.closest('.chip');
+      if (chip) chip.classList.remove('dragging');
+    });
+
+    // Drop targets — the whole chip-row is a target
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', (e) => {
+      if (!row.contains(e.relatedTarget)) row.classList.remove('drag-over');
+    });
+    row.addEventListener('drop', (e) => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      try {
+        const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+        if (data.from && data.em) chipMove(data.em, data.from, field);
+      } catch {}
+    });
+
+    // Manual entry — Enter / comma / space commits the email
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',' || e.key === ' ' || e.key === 'Tab') {
+        const v = input.value.trim().replace(/[,;]+$/, '');
+        if (!v) return;
+        if (!emailIsValid(v)) {
+          if (e.key !== 'Tab') { e.preventDefault(); toast('Invalid email: ' + v, 'warn'); }
+          return;
+        }
+        e.preventDefault();
+        chipAdd(field, chipFromEmail(v));
+        input.value = '';
+      } else if (e.key === 'Backspace' && !input.value && recipState[field].length > 0) {
+        // Backspace on empty input removes last chip
+        const last = recipState[field][recipState[field].length - 1];
+        chipRemove(field, last.em);
+      }
+    });
+    input.addEventListener('paste', (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      if (!text) return;
+      const emails = text.split(/[\s,;]+/).map(s => s.trim()).filter(emailIsValid);
+      if (emails.length === 0) return;
+      e.preventDefault();
+      emails.forEach(em => chipAdd(field, chipFromEmail(em)));
+      input.value = '';
+    });
+    input.addEventListener('blur', () => {
+      const v = input.value.trim();
+      if (v && emailIsValid(v)) {
+        chipAdd(field, chipFromEmail(v));
+        input.value = '';
+      }
+    });
+  });
+}
+
+// Get the current send mode (each-individual vs combined)
+function getSendMode() {
+  const r = document.querySelector('input[name="sendMode"]:checked');
+  return r ? r.value : 'each';
+}
+
+// Format a list of strings: ["A", "B", "C"] -> "A, B and C"
+function joinList(items) {
+  const arr = (items || []).filter(Boolean);
+  if (arr.length === 0) return '';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return arr[0] + ' and ' + arr[1];
+  return arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+}
+
 // Default Valencia Life Sciences template — pharmaceutical API portfolio introduction.
 // Seeded on first run; user can edit / save copies. {{name}} {{company}} {{country}} {{title}} are replaced per recipient.
 const VALENCIA_TEMPLATE = {
@@ -3597,7 +3953,7 @@ function seedDefaultTemplates() {
 function openCompose() {
   const n = getSelectedRecords().filter(r => r.em).length;
   if (n === 0) { toast('No emails in selection', 'info'); return; }
-  $('recipientHint').textContent = fmt(n) + ' email' + (n !== 1 ? 's' : '') + ' selected';
+  recipsFromSelection();
   // Auto-fill From fields. Priority: saved SMTP settings > old name/email keys > old combined string.
   const smtp = loadSmtp();
   let fromName = '', fromEmail = '';
@@ -3681,9 +4037,12 @@ function refreshTplDropdown() {
 }
 
 async function composeCopyBcc() {
-  const emails = getSelectedRecords().filter(r => r.em).map(r => r.em).join(', ');
+  // Copy all TO + CC + BCC chip emails (whatever the user has set up)
+  const all = [...recipState.to, ...recipState.cc, ...recipState.bcc].map(r => r.em);
+  const emails = [...new Set(all)].join(', ');
+  if (!emails) { toast('No recipients to copy', 'info'); return; }
   const ok = await copyText(emails);
-  toast(ok ? 'Copied BCC list' : 'Copy failed');
+  toast(ok ? 'Copied recipient list' : 'Copy failed');
 }
 
 async function composeCopyHtml() {
@@ -3706,21 +4065,34 @@ async function composeCopyHtml() {
 }
 
 function composeOpenGmail() {
-  const sel = getSelectedRecords().filter(r => r.em);
-  if (sel.length === 0) return;
-  const r = sel[0];
-  const { subj, text } = getComposeBodies(r);
-  const cc = $('composeCc').value.trim();
-  const bcc = mergeBcc(sel.slice(1).map(x => x.em), $('composeBcc').value.trim());
-  const params = new URLSearchParams({
-    view: 'cm', fs: '1', tf: '1',
-    to: r.em, su: subj, body: text || stripHtml(renderTemplate($('composeHtmlBody').value, r))
-  });
+  const toList = recipState.to;
+  if (toList.length === 0) { toast('Add at least one TO recipient', 'warn'); return; }
+  const mode = getSendMode();
+  // Use first TO recipient for personalisation in per-each mode, all in combined mode
+  let toAddr, subj, body;
+  if (mode === 'combined') {
+    toAddr = toList.map(r => r.em).join(', ');
+    subj = renderTemplateCombined($('composeSubject').value, toList);
+    const text = renderTemplateCombined($('composeBody').value, toList);
+    const html = renderTemplateCombined($('composeHtmlBody').value, toList);
+    body = text || stripHtml(html);
+  } else {
+    const r = toList[0];
+    toAddr = r.em;
+    subj = renderTemplate($('composeSubject').value, r);
+    const text = renderTemplate($('composeBody').value, r);
+    const html = renderTemplate($('composeHtmlBody').value, r);
+    body = text || stripHtml(html);
+  }
+  const cc = recipState.cc.map(r => r.em).join(', ');
+  const bcc = recipState.bcc.map(r => r.em).join(', ');
+  const params = new URLSearchParams({ view: 'cm', fs: '1', tf: '1', to: toAddr, su: subj, body });
   if (cc) params.set('cc', cc);
   if (bcc) params.set('bcc', bcc);
   window.open('https://mail.google.com/mail/?' + params.toString(), '_blank');
-  logSendForContact(r.id, subj, $('autoReminder').checked);
-  toast(`Opened Gmail for ${r.n || r.em} · logged`);
+  // Log against TO recipients that exist in our DB
+  toList.forEach(r => { if (r.id != null) logSendForContact(r.id, subj, $('autoReminder').checked); });
+  toast(`Opened Gmail · logged ${toList.length} recipient${toList.length !== 1 ? 's' : ''}`);
 }
 
 function mergeBcc(extra, existing) {
@@ -3732,18 +4104,23 @@ function stripHtml(html) {
 }
 
 async function composeSendSmtp() {
-  const sel = getSelectedRecords().filter(r => r.em);
-  if (sel.length === 0) { toast('No emails in selection', 'info'); return; }
+  const toList = recipState.to;
+  if (toList.length === 0) { toast('Add at least one TO recipient', 'warn'); return; }
   syncFromCombined();
   const from = $('composeFrom').value.trim();
   const fromEmail = $('composeFromEmail').value.trim();
-  if (!fromEmail) { toast('Enter your sending email address (the SMTP_USER one)', 'warn'); $('composeFromEmail').focus(); return; }
+  if (!fromEmail) { toast('Enter your sending email address (the SMTP user)', 'warn'); $('composeFromEmail').focus(); return; }
 
-  const ccGlobal = $('composeCc').value.trim();
-  const bccGlobal = $('composeBcc').value.trim();
+  const ccGlobal = recipState.cc.map(r => r.em).join(', ');
+  const bccGlobal = recipState.bcc.map(r => r.em).join(', ');
   const auto = $('autoReminder').checked;
+  const mode = getSendMode();
 
-  if (!confirm(`Send via SMTP to ${sel.length} contact${sel.length !== 1 ? 's' : ''}?\n\nThe API endpoint /api/send must be configured with SMTP credentials in Vercel env vars (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS).\n\nClick OK to proceed.`)) return;
+  const sendCount = mode === 'combined' ? 1 : toList.length;
+  const confirmMsg = mode === 'combined'
+    ? `Send ONE combined email to all ${toList.length} TO recipients (everyone sees each other)?\n\n+ ${recipState.cc.length} CC, ${recipState.bcc.length} BCC.`
+    : `Send ${toList.length} individual personalised email${toList.length !== 1 ? 's' : ''}?\n\n+ ${recipState.cc.length} CC, ${recipState.bcc.length} BCC on every send.`;
+  if (!confirm(confirmMsg + '\n\nClick OK to proceed.')) return;
 
   const status = $('composeSmtpStatus');
   const errors = [];
@@ -3751,44 +4128,75 @@ async function composeSendSmtp() {
   const setBar = (msg) => { const d = $('diagBar'); if (d) d.textContent = msg; };
 
   status.className = 'smtp-status testing';
-  status.textContent = `⟳ Sending 0 / ${sel.length}…`;
-  setBar('Sending 0/' + sel.length + '…');
+  status.textContent = `⟳ Sending 0 / ${sendCount}…`;
+  setBar('Sending 0/' + sendCount + '…');
 
-  for (let i = 0; i < sel.length; i++) {
-    const r = sel[i];
-    const { subj, text, html } = getComposeBodies(r);
-    const payload = {
-      from,
-      to: r.em,
-      cc: ccGlobal || undefined,
-      bcc: bccGlobal || undefined,
-      subject: subj,
-      text: text || stripHtml(html),
-      html: html || undefined,
-    };
+  // Helper to send one payload
+  async function sendPayload(payload) {
     payload.smtp = buildSmtpPayload();
-    try {
-      const res = await fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const respBody = await res.json().catch(() => ({ error: 'invalid response body' }));
-      if (!res.ok || !respBody.ok) {
-        throw new Error(respBody.error || ('HTTP ' + res.status));
-      }
-      sent++;
-      logSendForContact(r.id, subj, auto);
-      status.textContent = `⟳ Sent ${sent} / ${sel.length}…`;
-      setBar(`Sent ${sent}/${sel.length}…`);
-    } catch (e) {
-      failed++;
-      errors.push({ to: r.em, name: r.n, msg: e.message });
-      console.error('[apollo] SMTP send failed for', r.em, e);
-      crm.logActivity(r.id, 'email', `SMTP send FAILED: ${e.message}`);
+    const res = await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const respBody = await res.json().catch(() => ({ error: 'invalid response body' }));
+    if (!res.ok || !respBody.ok) {
+      throw new Error(respBody.error || ('HTTP ' + res.status));
     }
-    // Small spacing between sends to dodge Gmail per-second rate limits / connection reset
-    if (i < sel.length - 1) await new Promise(res => setTimeout(res, 600));
+    return respBody;
+  }
+
+  if (mode === 'combined') {
+    // ONE email to everyone in TO + CC + BCC. Variables = comma-list.
+    const subj = renderTemplateCombined($('composeSubject').value, toList);
+    const text = renderTemplateCombined($('composeBody').value,    toList);
+    const html = renderTemplateCombined($('composeHtmlBody').value, toList);
+    try {
+      await sendPayload({
+        from,
+        to: toList.map(r => r.em).join(', '),
+        cc: ccGlobal || undefined,
+        bcc: bccGlobal || undefined,
+        subject: subj,
+        text: text || stripHtml(html),
+        html: html || undefined,
+      });
+      sent = 1;
+      // Log against every TO recipient that exists in our contact DB
+      toList.forEach(r => { if (r.id != null) logSendForContact(r.id, subj, auto); });
+    } catch (e) {
+      failed = 1;
+      errors.push({ to: 'all-in-one', name: '', msg: e.message });
+      console.error('[apollo] Combined SMTP send failed:', e);
+    }
+  } else {
+    // Per-recipient personalised sends (existing behavior)
+    for (let i = 0; i < toList.length; i++) {
+      const r = toList[i];
+      const { subj, text, html } = getComposeBodies(r);
+      try {
+        await sendPayload({
+          from,
+          to: r.em,
+          cc: ccGlobal || undefined,
+          bcc: bccGlobal || undefined,
+          subject: subj,
+          text: text || stripHtml(html),
+          html: html || undefined,
+        });
+        sent++;
+        if (r.id != null) logSendForContact(r.id, subj, auto);
+        status.textContent = `⟳ Sent ${sent} / ${sendCount}…`;
+        setBar(`Sent ${sent}/${sendCount}…`);
+      } catch (e) {
+        failed++;
+        errors.push({ to: r.em, name: r.n, msg: e.message });
+        console.error('[apollo] SMTP send failed for', r.em, e);
+        if (r.id != null) crm.logActivity(r.id, 'email', `SMTP send FAILED: ${e.message}`);
+      }
+      // Spacing between sends to dodge Gmail rate limits
+      if (i < toList.length - 1) await new Promise(res => setTimeout(res, 600));
+    }
   }
 
   renderStageFilters(); renderTable(); refreshTabCounts();
@@ -3796,19 +4204,20 @@ async function composeSendSmtp() {
 
   if (failed === 0) {
     status.className = 'smtp-status ok';
-    status.textContent = `✓ Sent ${sent} email${sent !== 1 ? 's' : ''} successfully.`;
-    toast(`Sent ${sent} emails via SMTP`);
+    status.textContent = mode === 'combined'
+      ? `✓ Combined email sent to ${toList.length} TO recipients.`
+      : `✓ Sent ${sent} personalised email${sent !== 1 ? 's' : ''} successfully.`;
+    toast(`Sent successfully via SMTP`);
     setTimeout(closeCompose, 1500);
   } else {
     status.className = 'smtp-status err';
     const firstErr = errors[0];
     status.textContent = `✗ ${sent} sent, ${failed} failed. First error: ${firstErr.msg}`;
     toast(`${sent} sent, ${failed} failed — see error below`, 'warn');
-    // Show full per-recipient error list in console + an alert if all failed
     if (sent === 0 && errors.length) {
       const summary = errors.slice(0, 5).map(e => `• ${e.to}: ${e.msg}`).join('\n');
       const more = errors.length > 5 ? `\n…and ${errors.length - 5} more` : '';
-      alert(`All ${failed} sends failed:\n\n${summary}${more}\n\nMost likely fixes:\n1. SMTP_HOST/PORT/USER/PASS env vars not set on Vercel\n2. Use Gmail App Password (NOT regular password)\n3. From email must match SMTP_USER\n4. Check Vercel deployment env vars are saved AND a redeploy was done after`);
+      alert(`All ${failed} sends failed:\n\n${summary}${more}\n\nMost likely fixes:\n1. SMTP not configured — click "SMTP Settings" in topbar\n2. Use Gmail App Password (NOT regular password)\n3. From email must match SMTP user\n4. Check the Test connection button works first`);
     }
   }
 }
@@ -3849,6 +4258,22 @@ function renderTemplate(tpl, r) {
     .replace(/\{\{company\}\}/g, r.c || 'your company')
     .replace(/\{\{country\}\}/g, r.co || '')
     .replace(/\{\{title\}\}/g, r.t || '');
+}
+
+// Combined-mode template renderer — when one email goes to multiple recipients
+function renderTemplateCombined(tpl, recipients) {
+  const firstNames = recipients.map(r => (r.n || '').split(' ')[0]).filter(Boolean);
+  const fullNames  = recipients.map(r => r.n).filter(Boolean);
+  const companies  = [...new Set(recipients.map(r => r.c).filter(Boolean))];
+  const countries  = [...new Set(recipients.map(r => r.co).filter(Boolean))];
+  const titles     = [...new Set(recipients.map(r => r.t).filter(Boolean))];
+  return (tpl || '')
+    .replace(/\{\{names\}\}/g, joinList(firstNames) || 'there')
+    .replace(/\{\{name\}\}/g,  joinList(firstNames) || 'there')
+    .replace(/\{\{fullName\}\}/g, joinList(fullNames))
+    .replace(/\{\{company\}\}/g, joinList(companies) || 'your company')
+    .replace(/\{\{country\}\}/g, joinList(countries))
+    .replace(/\{\{title\}\}/g,   joinList(titles));
 }
 
 // ============ DETAIL DRAWER ============
@@ -5455,6 +5880,9 @@ function checkRemindersAndPop() {
   const due = getPoppableDue();
   if (due.length > 0) openReminderPopup(due);
 }
+
+// Wire recipient chip events (TO/CC/BCC drag-and-drop, manual entry, X-button removal)
+wireRecipChipEvents();
 
 // ============ BOOT ============
 loadData().then(() => {
