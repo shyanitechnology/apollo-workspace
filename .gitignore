@@ -21,3 +21,7 @@ npm-debug.log*
 # Build output (not applicable here, but safe)
 dist/
 build/
+
+# Pre-cleanup data backups (kept locally for revert; not pushed to repo)
+dashboard/static/apollo/_index.full.json
+dashboard/static/apollo/summary.full.json
