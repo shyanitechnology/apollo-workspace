@@ -2668,7 +2668,7 @@ function isPharmaTarget(title) {
 
 // ============ LANGUAGE / TRANSLATION HELPER ============
 // Detect titles likely in a non-English script. Doesn't delete data — just flags for translation hint.
-const NON_LATIN_RE = /[^ -ɏḀ-ỿ\s\d\W_]/;  // anything outside extended Latin = likely foreign script
+const NON_LATIN_RE = /[^\u0000-\u024F\u1E00-\u1EFF]/;  // anything outside extended Latin = likely foreign script
 const FOREIGN_LATIN_TOKENS = /\b(direttore|gerente|directeur|directora|director(a)?\b|ge(s|st)or|gestion|comprador|achete?ur|akup|satin\s?al|encarregad|responsable|responsabile|jefe|chefe|chefin|propriet|presidente|presidente|presidenta|fondateur|fondatrice|kierown|menedz|kup|nakup|propriedad|directeur|directrice|wlasciciel)/i;
 function looksForeign(title) {
   if (!title) return false;
