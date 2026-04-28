@@ -44,25 +44,28 @@ module.exports = async (req, res) => {
   }
   body = body || {};
 
-  const { from, to, cc, bcc, subject, text, html } = body;
+  const { from, to, cc, bcc, subject, text, html, smtp } = body;
   if (!to)      return res.status(400).json({ ok: false, error: 'Missing "to"' });
   if (!subject) return res.status(400).json({ ok: false, error: 'Missing "subject"' });
   if (!text && !html) return res.status(400).json({ ok: false, error: 'Missing body — provide "text" or "html"' });
 
-  const host = process.env.SMTP_HOST;
-  const portStr = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  // SMTP config can come from the request body (per-user, saved in their browser) OR env vars (fallback).
+  const host = (smtp && smtp.host) || process.env.SMTP_HOST;
+  const portStr = (smtp && smtp.port) || process.env.SMTP_PORT;
+  const user = (smtp && smtp.user) || process.env.SMTP_USER;
+  const pass = (smtp && smtp.pass) || process.env.SMTP_PASS;
   if (!host || !portStr || !user || !pass) {
     return res.status(500).json({
       ok: false,
-      error: 'SMTP env vars missing — set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in Vercel project settings.',
+      error: 'SMTP not configured. Open Settings (gear icon in Compose modal) and enter your email + App Password, OR set SMTP_HOST/PORT/USER/PASS env vars in Vercel.',
     });
   }
   const port = Number(portStr);
-  const secure = process.env.SMTP_SECURE
-    ? process.env.SMTP_SECURE === 'true'
-    : port === 465;
+  const secure = (smtp && typeof smtp.secure === 'boolean')
+    ? smtp.secure
+    : process.env.SMTP_SECURE
+      ? process.env.SMTP_SECURE === 'true'
+      : port === 465;
 
   const transporter = nodemailer.createTransport({
     host, port, secure,

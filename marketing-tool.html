@@ -780,6 +780,24 @@ html, body {
 /* Compose modal sizing */
 .compose-modal { width: min(720px, 96vw); max-height: 92vh; }
 
+/* Settings modal */
+.settings-modal { width: min(560px, 96vw); max-height: 92vh; }
+.warn-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 10px;
+  margin-bottom: 18px;
+  color: var(--amber);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.warn-banner svg { color: var(--amber); flex-shrink: 0; margin-top: 2px; }
+.warn-banner strong { color: var(--text-hi); }
+
 /* Sending account box — prominent so user can spot the SMTP-must-match-here gotcha */
 .send-account-box {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.04));
@@ -2429,7 +2447,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.2-from-fields-smtp-test · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.3-smtp-settings-saved · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2477,8 +2495,12 @@ html, body {
       </div>
       <input id="composeFrom" type="hidden">
       <div class="send-account-test">
-        <button class="btn sm" id="composeTestSmtp" type="button">⚡ Test SMTP connection</button>
-        <span id="composeSmtpStatus" class="smtp-status">Click to verify config — sends a test email to your own From address.</span>
+        <button class="btn sm" id="openSettings" type="button" title="Configure SMTP credentials in this tool">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          SMTP Settings
+        </button>
+        <button class="btn sm" id="composeTestSmtp" type="button">⚡ Test connection</button>
+        <span id="composeSmtpStatus" class="smtp-status">Click "SMTP Settings" to configure, then "Test connection" to verify.</span>
       </div>
     </div>
 
@@ -2557,10 +2579,90 @@ html, body {
     <button class="btn" id="composeDownloadCsv" title="Export selected as CSV">Export CSV</button>
     <button class="btn" id="composeOpenGmail" title="Open in Gmail web compose with all fields prefilled">Open in Gmail</button>
     <button class="btn" id="composeLogAll" title="Mark all as Contacted + log send activity">Log all as sent</button>
-    <button class="btn primary" id="composeSendSmtp" title="Send via SMTP (requires backend / Vercel env vars)">
+    <button class="btn primary" id="composeSendSmtp" title="Send via SMTP using saved credentials">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
       Send via SMTP
     </button>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL — SMTP credentials saved per-browser -->
+<div class="modal settings-modal" id="settingsModal">
+  <div class="modal-head">
+    <div class="modal-title">SMTP Settings · Save your sending account</div>
+    <button class="modal-close" id="settingsClose">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="warn-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <strong>Saved in your browser only.</strong> The password sits in localStorage as plain text — anyone with access to this device/browser can read it. <strong>Use a Gmail App Password</strong>, not your main account password, so you can revoke it independently.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Provider preset</label>
+      <select class="field-select" id="smtpPreset" style="width:100%;">
+        <option value="custom">Custom / manual</option>
+        <option value="gmail">Gmail · smtp.gmail.com:465</option>
+        <option value="outlook">Outlook 365 · smtp.office365.com:587</option>
+        <option value="yahoo">Yahoo · smtp.mail.yahoo.com:465</option>
+        <option value="zoho">Zoho · smtp.zoho.com:465</option>
+        <option value="resend">Resend · smtp.resend.com:465</option>
+        <option value="sendgrid">SendGrid · smtp.sendgrid.net:587</option>
+        <option value="brevo">Brevo (Sendinblue) · smtp-relay.brevo.com:587</option>
+      </select>
+    </div>
+
+    <div class="field-group" style="display:grid;grid-template-columns:2fr 1fr;gap:10px;">
+      <div>
+        <label class="field-label">SMTP host</label>
+        <input class="field-input" id="smtpHost" placeholder="smtp.gmail.com">
+      </div>
+      <div>
+        <label class="field-label">Port</label>
+        <input class="field-input" id="smtpPort" placeholder="465" type="number">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Display name (shown to recipients)</label>
+      <input class="field-input" id="smtpDisplayName" placeholder="Vishal Modi · Valencia Life Sciences">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Email / SMTP username</label>
+      <input class="field-input" id="smtpUser" placeholder="valencialifesciences@gmail.com" type="email" autocomplete="username">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">App password / SMTP password</label>
+      <div style="display:flex;gap:6px;">
+        <input class="field-input" id="smtpPass" placeholder="abcd efgh ijkl mnop" type="password" autocomplete="new-password" style="flex:1;">
+        <button class="btn sm" id="smtpPassToggle" type="button" title="Show / hide password">👁</button>
+      </div>
+      <div class="field-hint">
+        Gmail: <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color:var(--cyan);">create an App Password</a> (requires 2FA enabled). Spaces are OK — copy the 16-character password Google gives you.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" style="font-family:var(--sans);font-size:13px;color:var(--text);text-transform:none;letter-spacing:0;">
+        <input type="checkbox" id="smtpSecure" checked style="margin-right:6px;">
+        Use SSL/TLS (recommended; auto-checked for port 465)
+      </label>
+    </div>
+
+    <div id="smtpSavedIndicator" style="display:none;padding:10px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:var(--emerald);font-size:12px;">
+      ✓ Credentials saved. <span id="smtpSavedFor"></span>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn danger" id="smtpClear" title="Wipe saved credentials">Clear saved</button>
+    <button class="btn" id="smtpTestFromSettings">⚡ Test connection</button>
+    <button class="btn primary" id="smtpSave">Save credentials</button>
   </div>
 </div>
 
@@ -3442,22 +3544,38 @@ function openCompose() {
   const n = getSelectedRecords().filter(r => r.em).length;
   if (n === 0) { toast('No emails in selection', 'info'); return; }
   $('recipientHint').textContent = fmt(n) + ' email' + (n !== 1 ? 's' : '') + ' selected';
-  // Restore From details from saved values
-  const savedFromName = localStorage.getItem('apollo_from_name') || '';
-  const savedFromEmail = localStorage.getItem('apollo_from_email') || '';
-  // Back-compat: if old combined From is stored, parse it
-  const oldFrom = localStorage.getItem(FROM_KEY) || '';
-  if (oldFrom && !savedFromEmail) {
-    const m = oldFrom.match(/^\s*"?([^"<]*)"?\s*<?([^>]*)>?\s*$/);
-    if (m) {
-      $('composeFromName').value = (m[1] || '').trim();
-      $('composeFromEmail').value = (m[2] || m[1] || '').trim();
+  // Auto-fill From fields. Priority: saved SMTP settings > old name/email keys > old combined string.
+  const smtp = loadSmtp();
+  let fromName = '', fromEmail = '';
+  if (smtp && smtp.user) {
+    fromName = smtp.displayName || '';
+    fromEmail = smtp.user;
+  } else {
+    fromName = localStorage.getItem('apollo_from_name') || '';
+    fromEmail = localStorage.getItem('apollo_from_email') || '';
+    const oldFrom = localStorage.getItem(FROM_KEY) || '';
+    if (oldFrom && !fromEmail) {
+      const m = oldFrom.match(/^\s*"?([^"<]*)"?\s*<?([^>]*)>?\s*$/);
+      if (m) { fromName = (m[1] || '').trim(); fromEmail = (m[2] || m[1] || '').trim(); }
+    }
+  }
+  $('composeFromName').value = fromName;
+  $('composeFromEmail').value = fromEmail;
+  syncFromCombined();
+  // Hint when no SMTP saved
+  if (!hasSmtpSaved()) {
+    const status = $('composeSmtpStatus');
+    if (status) {
+      status.className = 'smtp-status err';
+      status.textContent = '⚠ No SMTP saved. Click "SMTP Settings" to add your email + App Password.';
     }
   } else {
-    $('composeFromName').value = savedFromName;
-    $('composeFromEmail').value = savedFromEmail;
+    const status = $('composeSmtpStatus');
+    if (status) {
+      status.className = 'smtp-status ok';
+      status.textContent = '✓ SMTP configured for ' + (smtp.user || '') + '. Click Test connection to verify.';
+    }
   }
-  syncFromCombined();
 
   // Seed default Valencia template on first run
   seedDefaultTemplates();
@@ -3594,6 +3712,7 @@ async function composeSendSmtp() {
       text: text || stripHtml(html),
       html: html || undefined,
     };
+    payload.smtp = buildSmtpPayload();
     try {
       const res = await fetch('/api/send', {
         method: 'POST',
@@ -4754,6 +4873,119 @@ $('composeHtmlFile').addEventListener('change', async (e) => {
   e.target.value = '';
 });
 
+// ============ SMTP SETTINGS (saved per-browser, sent in /api/send body) ============
+const SMTP_KEY = 'apollo_smtp_v1';
+const SMTP_PRESETS = {
+  gmail:    { host: 'smtp.gmail.com',          port: 465, secure: true  },
+  outlook:  { host: 'smtp.office365.com',      port: 587, secure: false },
+  yahoo:    { host: 'smtp.mail.yahoo.com',     port: 465, secure: true  },
+  zoho:     { host: 'smtp.zoho.com',           port: 465, secure: true  },
+  resend:   { host: 'smtp.resend.com',         port: 465, secure: true  },
+  sendgrid: { host: 'smtp.sendgrid.net',       port: 587, secure: false },
+  brevo:    { host: 'smtp-relay.brevo.com',    port: 587, secure: false },
+};
+function loadSmtp() {
+  try { return JSON.parse(localStorage.getItem(SMTP_KEY) || 'null'); } catch { return null; }
+}
+function saveSmtp(cfg) { localStorage.setItem(SMTP_KEY, JSON.stringify(cfg)); }
+function hasSmtpSaved() { const s = loadSmtp(); return !!(s && s.host && s.user && s.pass); }
+function clearSmtp() { localStorage.removeItem(SMTP_KEY); }
+function maskedFromSaved() {
+  const s = loadSmtp();
+  if (!s) return '';
+  const u = s.user || '';
+  return u.replace(/(.{2}).*(@.*)/, '$1***$2');
+}
+
+function openSettingsModal() {
+  const s = loadSmtp() || { host: 'smtp.gmail.com', port: 465, secure: true, user: '', pass: '', displayName: '' };
+  $('smtpHost').value = s.host || '';
+  $('smtpPort').value = s.port || '';
+  $('smtpUser').value = s.user || '';
+  $('smtpPass').value = s.pass || '';
+  $('smtpDisplayName').value = s.displayName || '';
+  $('smtpSecure').checked = s.secure !== false;
+  // Auto-pick preset if matches
+  let matched = 'custom';
+  for (const [k, p] of Object.entries(SMTP_PRESETS)) {
+    if (p.host === s.host && p.port === Number(s.port)) { matched = k; break; }
+  }
+  $('smtpPreset').value = matched;
+  // Saved indicator
+  if (hasSmtpSaved()) {
+    $('smtpSavedIndicator').style.display = '';
+    $('smtpSavedFor').textContent = 'Sending as ' + maskedFromSaved();
+  } else {
+    $('smtpSavedIndicator').style.display = 'none';
+  }
+  $('modalBackdrop').classList.add('active');
+  $('settingsModal').classList.add('active');
+  $('smtpUser').focus();
+}
+function closeSettingsModal() {
+  $('settingsModal').classList.remove('active');
+  if (!document.querySelector('.modal.active')) $('modalBackdrop').classList.remove('active');
+}
+
+// Wire settings modal
+$('openSettings').addEventListener('click', openSettingsModal);
+$('settingsClose').addEventListener('click', closeSettingsModal);
+
+$('smtpPreset').addEventListener('change', () => {
+  const k = $('smtpPreset').value;
+  if (k === 'custom') return;
+  const p = SMTP_PRESETS[k];
+  if (!p) return;
+  $('smtpHost').value = p.host;
+  $('smtpPort').value = p.port;
+  $('smtpSecure').checked = p.secure;
+});
+$('smtpPort').addEventListener('input', () => {
+  const port = Number($('smtpPort').value);
+  if (port === 465) $('smtpSecure').checked = true;
+  else if (port === 587 || port === 25) $('smtpSecure').checked = false;
+});
+$('smtpPassToggle').addEventListener('click', () => {
+  const inp = $('smtpPass');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+});
+$('smtpSave').addEventListener('click', () => {
+  const cfg = {
+    host: $('smtpHost').value.trim(),
+    port: Number($('smtpPort').value) || 465,
+    secure: $('smtpSecure').checked,
+    user: $('smtpUser').value.trim(),
+    pass: $('smtpPass').value,
+    displayName: $('smtpDisplayName').value.trim(),
+  };
+  if (!cfg.host || !cfg.user || !cfg.pass) {
+    toast('Host, email, and password are all required', 'warn');
+    return;
+  }
+  saveSmtp(cfg);
+  // Auto-fill the Compose modal's From fields too
+  $('composeFromName').value = cfg.displayName;
+  $('composeFromEmail').value = cfg.user;
+  syncFromCombined();
+  toast('SMTP credentials saved');
+  $('smtpSavedIndicator').style.display = '';
+  $('smtpSavedFor').textContent = 'Sending as ' + cfg.user;
+});
+$('smtpClear').addEventListener('click', () => {
+  if (!confirm('Wipe saved SMTP credentials from this browser?')) return;
+  clearSmtp();
+  $('smtpHost').value = ''; $('smtpPort').value = ''; $('smtpUser').value = '';
+  $('smtpPass').value = ''; $('smtpDisplayName').value = '';
+  $('smtpSavedIndicator').style.display = 'none';
+  toast('Credentials cleared', 'info');
+});
+$('smtpTestFromSettings').addEventListener('click', async () => {
+  // Save first, then run the same test as the Compose-modal one
+  $('smtpSave').click();
+  closeSettingsModal();
+  setTimeout(() => $('composeTestSmtp').click(), 200);
+});
+
 // Combine name + email into the hidden composeFrom field; persist both pieces
 function syncFromCombined() {
   const name = $('composeFromName').value.trim();
@@ -4769,13 +5001,25 @@ function syncFromCombined() {
   $(id).addEventListener('input', syncFromCombined);
 });
 
+// Build the smtp config block that gets sent in /api/send body (per-user creds)
+function buildSmtpPayload() {
+  const s = loadSmtp();
+  if (!s || !s.host || !s.user || !s.pass) return undefined;
+  return { host: s.host, port: s.port, secure: s.secure, user: s.user, pass: s.pass };
+}
+
 // Test SMTP — sends a single email from the From address to itself
 $('composeTestSmtp').addEventListener('click', async () => {
   const status = $('composeSmtpStatus');
-  const email = $('composeFromEmail').value.trim();
+  const email = ($('composeFromEmail').value.trim()) || (loadSmtp() || {}).user || '';
   if (!email) {
     status.className = 'smtp-status err';
-    status.textContent = '⚠ Enter an email address above first.';
+    status.textContent = '⚠ Open SMTP Settings first and save your credentials.';
+    return;
+  }
+  if (!hasSmtpSaved()) {
+    status.className = 'smtp-status err';
+    status.textContent = '⚠ No SMTP credentials saved. Click "SMTP Settings" to add them, or set Vercel env vars.';
     return;
   }
   status.className = 'smtp-status testing';
@@ -4786,7 +5030,8 @@ $('composeTestSmtp').addEventListener('click', async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: $('composeFrom').value,
+        smtp: buildSmtpPayload(),
+        from: $('composeFrom').value || email,
         to: email,
         subject: 'Apollo Workbench · SMTP test',
         text: 'This is a test email from Apollo Workbench. If you got this in your inbox, your SMTP configuration is working correctly.',
@@ -4796,7 +5041,7 @@ $('composeTestSmtp').addEventListener('click', async () => {
     const body = await res.json().catch(() => ({}));
     if (res.ok && body.ok) {
       status.className = 'smtp-status ok';
-      status.textContent = '✓ Test email sent. Check your inbox at ' + email + ' (also check spam).';
+      status.textContent = '✓ Test email sent to ' + email + ' — check inbox / spam.';
     } else {
       status.className = 'smtp-status err';
       const msg = body.error || ('HTTP ' + res.status);
