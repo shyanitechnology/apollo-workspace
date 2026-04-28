@@ -2351,7 +2351,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.0-pharma-smtp-popup · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.1-valencia-default-tpl · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2439,8 +2439,12 @@ html, body {
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <select class="field-select" id="composeTplSelect" style="flex:1;min-width:200px;"><option value="">— Saved templates —</option></select>
         <button class="btn sm" id="composeTplLoad">Load</button>
-        <button class="btn sm" id="composeTplSave">Save current as…</button>
+        <button class="btn sm" id="composeTplSave">Save as…</button>
         <button class="btn sm danger" id="composeTplDelete">Delete</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+        <button class="btn sm" id="composeResetValencia" title="Reload the default Valencia Life Sciences template (overwrites current draft)">↻ Reset to Valencia template</button>
+        <button class="btn sm" id="composeClearAll" title="Clear all body / subject fields">Clear all fields</button>
       </div>
     </div>
 
@@ -3175,14 +3179,191 @@ function closeStageModal() {
 // ============ COMPOSE ============
 const TPL_KEY = 'apollo_email_templates_v1';
 const FROM_KEY = 'apollo_from_address';
+const SEED_KEY = 'apollo_default_tpl_seeded_v1';
 function loadTemplates() { return JSON.parse(localStorage.getItem(TPL_KEY) || '{}'); }
 function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
+
+// Default Valencia Life Sciences template — pharmaceutical API portfolio introduction.
+// Seeded on first run; user can edit / save copies. {{name}} {{company}} {{country}} {{title}} are replaced per recipient.
+const VALENCIA_TEMPLATE = {
+  subject: 'Valencia Life Sciences — Pharmaceutical API supply for {{company}} (Lidocaine, Meloxicam, Prilocaine)',
+  cc: '',
+  bcc: '',
+  text:
+`Dear {{name}},
+
+Greetings from Valencia Life Sciences!
+
+We are a pharmaceutical API and Intermediate manufacturer and exporter based in Bamanbore GIDC, Rajkot, Gujarat, India. We specialise in high-quality Active Pharmaceutical Ingredients (APIs) and intermediates, with a focused portfolio including Lidocaine Hydrochloride, Lidocaine Base, Meloxicam, Prilocaine Hydrochloride, Prilocaine Base, and a range of pharmaceutical intermediates.
+
+Valencia Life Sciences serves a strong domestic client base across India and maintains established export partnerships globally — well positioned to support {{company}}'s sourcing requirements in {{country}}.
+
+CERTIFICATIONS & REGULATORY COMPLIANCE
+  • WHO-GMP compliant manufacturing — international quality standards
+  • cGMP (Current Good Manufacturing Practices) — high-quality production
+  • DMF for Lidocaine HCl, Lidocaine Base and Meloxicam with COPP
+  • Written Confirmation Application submitted for Lidocaine HCl & Lidocaine Base
+  • DMF filed with Chinese NMPA
+  • Lidocaine Base DMF registered with Korean FDA; Lidocaine HCl registration in process
+
+PRODUCT LIST — Active Pharmaceutical Ingredients
+  1. Lidocaine Hydrochloride — IP/BP/EP/USP — Local Anesthetic — CAS 6108-05-0 — DMF available — 30 MT / month
+  2. Lidocaine Base — IP/BP/EP/USP — Local Anesthetic — CAS 137-58-6 — DMF available — 30 MT / month
+  3. Meloxicam — IP/BP/EP/USP — Anti-inflammatory — CAS 71125-38-7 — DMF available — 3 MT / month
+  4. Prilocaine Hydrochloride — BP/EP/USP — Local Anesthetic — CAS 1786-81-8 — DMF in preparation — 20 MT / month
+  5. Prilocaine Base — BP/EP/USP — Local Anesthetic — CAS 721-50-6 — DMF in preparation — 20 MT / month
+
+INTERMEDIATES
+  1. ChloroAcetyl Xylidine (N-Chloroacetyl 2,6 Dimethylaniline) — CAS 1131-01-7 — for Lidocaine HCl/Base — 30 MT / month
+  2. 4-Hydroxy 2-Methyl-2H 1,2-Benzothiazine Carboxylic Acid Isopropyl Ester 1,1-Dioxide — CAS 118854-48-1 — for Meloxicam & Piroxicam — 20 MT / month
+
+We would value the opportunity to support {{company}} as a long-term API supplier. Please feel free to contact us for product specifications, COA samples, or pricing — we will respond promptly.
+
+Best regards,
+
+Mr. Vishal Modi
+Director — Business Development
+Valencia Life Sciences
+
+M: +91 99984 09981
+E: valencialifesciences@gmail.com
+W: www.valencialifesciences.com
+
+Plot No. 1108, Bamanbore GIDC, Taluka: Chotila,
+District: Surendranagar, Pin Code: 363 520, Gujarat (India)
+
+WHO-GMP CERTIFIED COMPANY`,
+  html:
+`<div style="font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#222;max-width:720px;line-height:1.5;">
+  <p>Dear {{name}},</p>
+  <p>Greetings from <strong>Valencia Life Sciences</strong>!</p>
+  <p>We are a <strong>pharmaceutical API and Intermediate</strong> manufacturer and exporter based in <strong>Bamanbore GIDC, Rajkot, Gujarat, India</strong>. We specialise in the production of high-quality Active Pharmaceutical Ingredients (APIs) and intermediates, with a focused product portfolio including <strong>Lidocaine Hydrochloride, Lidocaine Base, Meloxicam, Prilocaine Hydrochloride, Prilocaine Base</strong>, and a range of pharmaceutical intermediates.</p>
+  <p>Valencia Life Sciences serves a strong domestic client base across India and maintains established export partnerships globally — well positioned to support <strong>{{company}}</strong>'s sourcing requirements in {{country}}.</p>
+
+  <hr style="border:none;border-top:1px solid #cfd8dc;margin:18px 0;">
+
+  <h3 style="margin:0 0 10px;color:#222;font-size:13pt;">Certifications &amp; Regulatory Compliance</h3>
+  <p style="margin:0 0 8px;">Valencia Life Sciences operates under a strong quality and regulatory framework with the following certifications and approvals:</p>
+  <ul style="padding-left:22px;margin:0 0 14px;">
+    <li><strong>WHO-GMP compliant manufacturing</strong> &mdash; international quality standards</li>
+    <li><strong>cGMP (Current Good Manufacturing Practices)</strong> &mdash; high-quality production</li>
+    <li><strong>DMF for Lidocaine Hydrochloride, Lidocaine Base and Meloxicam with COPP</strong> &mdash; supports regulated-market submissions</li>
+    <li><strong>Written Confirmation</strong> Application submitted for <strong>Lidocaine HCl &amp; Lidocaine Base</strong></li>
+    <li>Filed DMF with <strong>Chinese NMPA</strong></li>
+    <li>Successfully registered DMF of Lidocaine Base with <strong>Korean FDA</strong>; Lidocaine HCl registration in process</li>
+  </ul>
+  <p>These certifications demonstrate our commitment to delivering safe, consistent, and globally compliant pharmaceutical ingredients.</p>
+
+  <hr style="border:none;border-top:1px solid #cfd8dc;margin:18px 0;">
+
+  <p style="margin:0 0 10px;">For your reference, kindly find below our <strong>updated product list</strong>.</p>
+
+  <table cellspacing="0" cellpadding="6" border="1" style="border-collapse:collapse;font-size:10pt;width:100%;border-color:#b0bec5;">
+    <thead>
+      <tr style="background:#00BACD;color:white;">
+        <th colspan="7" style="padding:8px;text-align:center;font-size:11pt;">VALENCIA LIFE SCIENCES &mdash; PRODUCT LIST</th>
+      </tr>
+      <tr style="background:#0098a8;color:white;">
+        <th colspan="7" style="padding:6px;text-align:center;">ACTIVE PHARMACEUTICAL INGREDIENTS (COMMERCIAL)</th>
+      </tr>
+      <tr style="background:#e0f7fa;color:#004d56;">
+        <th style="padding:6px;">Sr.</th>
+        <th style="padding:6px;">Product</th>
+        <th style="padding:6px;">Grade</th>
+        <th style="padding:6px;">Therapeutic use</th>
+        <th style="padding:6px;">CAS No.</th>
+        <th style="padding:6px;">DMF</th>
+        <th style="padding:6px;">Capacity /<br>month</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:center;">1</td><td>Lidocaine Hydrochloride</td><td style="text-align:center;">IP/BP/EP/USP</td><td style="text-align:center;">Local Anesthetic</td><td style="text-align:center;">6108-05-0</td><td style="text-align:center;">BP/EP/USP</td><td style="text-align:center;">30 MT</td></tr>
+      <tr><td style="text-align:center;">2</td><td>Lidocaine Base</td><td style="text-align:center;">IP/BP/EP/USP</td><td style="text-align:center;">Local Anesthetic</td><td style="text-align:center;">137-58-6</td><td style="text-align:center;">BP/EP/USP</td><td style="text-align:center;">30 MT</td></tr>
+      <tr><td style="text-align:center;">3</td><td>Meloxicam</td><td style="text-align:center;">IP/BP/EP/USP</td><td style="text-align:center;">Anti-inflammatory</td><td style="text-align:center;">71125-38-7</td><td style="text-align:center;">BP/EP/USP</td><td style="text-align:center;">3 MT</td></tr>
+      <tr><td style="text-align:center;">4</td><td>Prilocaine Hydrochloride</td><td style="text-align:center;">BP/EP/USP</td><td style="text-align:center;">Local Anesthetic</td><td style="text-align:center;">1786-81-8</td><td style="text-align:center;">In preparation</td><td style="text-align:center;">20 MT</td></tr>
+      <tr><td style="text-align:center;">5</td><td>Prilocaine Base</td><td style="text-align:center;">BP/EP/USP</td><td style="text-align:center;">Local Anesthetic</td><td style="text-align:center;">721-50-6</td><td style="text-align:center;">In preparation</td><td style="text-align:center;">20 MT</td></tr>
+    </tbody>
+  </table>
+
+  <table cellspacing="0" cellpadding="6" border="1" style="border-collapse:collapse;font-size:10pt;width:100%;margin-top:14px;border-color:#b0bec5;">
+    <thead>
+      <tr style="background:#0098a8;color:white;">
+        <th colspan="6" style="padding:6px;text-align:center;">INTERMEDIATES (COMMERCIAL)</th>
+      </tr>
+      <tr style="background:#e0f7fa;color:#004d56;">
+        <th style="padding:6px;">Sr.</th>
+        <th style="padding:6px;">Product</th>
+        <th style="padding:6px;">Grade</th>
+        <th style="padding:6px;">End use</th>
+        <th style="padding:6px;">CAS No.</th>
+        <th style="padding:6px;">Capacity /<br>month</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:center;">1</td><td>ChloroAcetyl Xylidine<br><span style="color:#607d8b;font-size:9pt;">(N-Chloroacetyl 2,6 Dimethylaniline)</span></td><td style="text-align:center;">INH</td><td style="text-align:center;">Lidocaine HCl/Base</td><td style="text-align:center;">1131-01-7</td><td style="text-align:center;">30 MT</td></tr>
+      <tr><td style="text-align:center;">2</td><td>4-Hydroxy 2-Methyl-2H 1,2-Benzothiazine Carboxylic Acid Isopropyl Ester 1,1-Dioxide</td><td style="text-align:center;">INH</td><td style="text-align:center;">Meloxicam &amp; Piroxicam</td><td style="text-align:center;">118854-48-1</td><td style="text-align:center;">20 MT</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:18px;">We would value the opportunity to support <strong>{{company}}</strong> as a long-term API supplier. Please feel free to contact us for product specifications, COA samples, or pricing — we will respond promptly.</p>
+
+  <p>Best regards,</p>
+
+  <table cellpadding="0" cellspacing="0" style="font-family:Tahoma,Arial,sans-serif;font-size:10pt;color:#3a4345;border-top:2px solid #0ECBE5;padding-top:14px;margin-top:18px;">
+    <tr>
+      <td>
+        <div style="font-size:14pt;color:#0ECBE5;font-weight:700;line-height:1.1;">Mr. Vishal Modi</div>
+        <div style="font-weight:bold;font-size:11pt;margin-top:2px;">Director &mdash; Business Development</div>
+        <div style="margin-top:8px;font-size:9pt;line-height:1.6;">
+          <strong>M:</strong> +91 99984 09981<br>
+          <strong>E:</strong> <a href="mailto:valencialifesciences@gmail.com" style="color:#0ECBE5;">valencialifesciences@gmail.com</a><br>
+          <strong>W:</strong> <a href="http://www.valencialifesciences.com" style="color:#0ECBE5;">www.valencialifesciences.com</a>
+        </div>
+        <div style="margin-top:10px;font-size:9pt;line-height:1.5;color:#37474f;">
+          <strong>Valencia Life Sciences</strong><br>
+          Plot No. 1108, Bamanbore GIDC, Taluka: Chotila,<br>
+          District: Surendranagar, Pin Code: 363 520, Gujarat (India)
+        </div>
+        <div style="margin-top:14px;padding-top:8px;border-top:1px solid #e0e0e0;font-family:Verdana,Arial,sans-serif;font-weight:bold;color:#222;font-size:11pt;">WHO-GMP CERTIFIED COMPANY</div>
+      </td>
+    </tr>
+  </table>
+</div>`,
+};
+
+function seedDefaultTemplates() {
+  if (localStorage.getItem(SEED_KEY)) return;
+  const tpls = loadTemplates();
+  if (!tpls['Valencia · API portfolio intro']) {
+    tpls['Valencia · API portfolio intro'] = { ...VALENCIA_TEMPLATE, savedAt: new Date().toISOString() };
+    saveTemplates(tpls);
+  }
+  localStorage.setItem(SEED_KEY, '1');
+}
 
 function openCompose() {
   const n = getSelectedRecords().filter(r => r.em).length;
   if (n === 0) { toast('No emails in selection', 'info'); return; }
   $('recipientHint').textContent = fmt(n) + ' email' + (n !== 1 ? 's' : '') + ' selected';
   $('composeFrom').value = localStorage.getItem(FROM_KEY) || '';
+
+  // Seed default Valencia template on first run
+  seedDefaultTemplates();
+
+  // Auto-load Valencia HTML template if both bodies are empty
+  // (only on first open after page load — preserves any in-progress draft thereafter)
+  if (!$('composeSubject').value && !$('composeBody').value && !$('composeHtmlBody').value) {
+    $('composeSubject').value = VALENCIA_TEMPLATE.subject;
+    $('composeBody').value    = VALENCIA_TEMPLATE.text;
+    $('composeHtmlBody').value= VALENCIA_TEMPLATE.html;
+    $('composeCc').value      = VALENCIA_TEMPLATE.cc || '';
+    $('composeBcc').value     = VALENCIA_TEMPLATE.bcc || '';
+    // Switch to HTML tab so the user sees the formatted version first
+    document.querySelectorAll('.compose-tab').forEach(x => x.classList.toggle('active', x.dataset.bodyTab === 'html'));
+    $('composeTextWrap').style.display = 'none';
+    $('composeHtmlWrap').style.display = '';
+  }
+
   refreshTplDropdown();
   refreshHtmlPreview();
   $('modalBackdrop').classList.add('active');
@@ -4481,6 +4662,34 @@ $('composeTplDelete').addEventListener('click', () => {
   saveTemplates(tpls);
   refreshTplDropdown();
   toast('Template deleted');
+});
+
+$('composeResetValencia').addEventListener('click', () => {
+  if ($('composeSubject').value || $('composeBody').value || $('composeHtmlBody').value) {
+    if (!confirm('This overwrites your current draft with the Valencia template. Continue?')) return;
+  }
+  $('composeSubject').value  = VALENCIA_TEMPLATE.subject;
+  $('composeBody').value     = VALENCIA_TEMPLATE.text;
+  $('composeHtmlBody').value = VALENCIA_TEMPLATE.html;
+  $('composeCc').value       = VALENCIA_TEMPLATE.cc || '';
+  $('composeBcc').value      = VALENCIA_TEMPLATE.bcc || '';
+  // Switch to HTML tab
+  document.querySelectorAll('.compose-tab').forEach(x => x.classList.toggle('active', x.dataset.bodyTab === 'html'));
+  $('composeTextWrap').style.display = 'none';
+  $('composeHtmlWrap').style.display = '';
+  refreshHtmlPreview();
+  toast('Valencia template loaded');
+});
+
+$('composeClearAll').addEventListener('click', () => {
+  if (!confirm('Clear subject, body, HTML, CC, and BCC?')) return;
+  $('composeSubject').value = '';
+  $('composeBody').value = '';
+  $('composeHtmlBody').value = '';
+  $('composeCc').value = '';
+  $('composeBcc').value = '';
+  refreshHtmlPreview();
+  toast('Cleared');
 });
 document.querySelectorAll('.var-chip[data-var]').forEach(chip => {
   chip.addEventListener('click', () => {
