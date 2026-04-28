@@ -12,9 +12,47 @@ Static lead-intelligence + CRM tool. No backend, no build step. Pure HTML + JSON
 ├── dashboard/static/apollo/
 │   ├── _index.json                         Full contact index (~18 MB, 115,664 rows)
 │   └── summary.json                        Aggregated stats by market
+├── api/
+│   └── send.js                             Serverless SMTP send endpoint (nodemailer)
+├── package.json                            Declares nodemailer dependency
 ├── vercel.json                             Cache + security headers
 └── .gitignore
 ```
+
+## Sending email via SMTP (Vercel)
+
+The CRM has a "Send via SMTP" button in the Compose modal. Wire it up like this:
+
+### 1. Get SMTP credentials
+
+| Provider | Host | Port | Notes |
+|---|---|---|---|
+| Gmail | `smtp.gmail.com` | `465` | Need an App Password (Google Account → Security → 2-step verification → App passwords) |
+| Outlook 365 | `smtp.office365.com` | `587` | App password if MFA enabled |
+| Zoho | `smtp.zoho.com` | `465` | Mail account password |
+| Resend | `smtp.resend.com` | `465` | Recommended for deliverability — uses API key as password |
+| Custom | your host | per host | Use what your provider gives you |
+
+### 2. Add Vercel environment variables
+
+Vercel dashboard → your project → **Settings → Environment Variables** → add for **Production** (and Preview if desired):
+
+| Name | Example value |
+|---|---|
+| `SMTP_HOST`        | `smtp.gmail.com` |
+| `SMTP_PORT`        | `465` |
+| `SMTP_USER`        | `you@yourdomain.com` |
+| `SMTP_PASS`        | (app password) |
+| `SMTP_FROM`        | `"Your Name" <you@yourdomain.com>` (optional) |
+| `API_AUTH_TOKEN`   | any random string (optional, adds shared-secret auth) |
+
+After adding, **Redeploy** (env vars don't apply to existing deployments).
+
+### 3. Test
+
+Open the deployed site → Browse a country/company → select people → Compose → fill subject + HTML body → **Send via SMTP**.
+
+If it fails: open browser DevTools → Network tab → look at the `/api/send` request response. Errors usually tell you which env var is missing or which auth step failed.
 
 ## WARNING — Privacy
 

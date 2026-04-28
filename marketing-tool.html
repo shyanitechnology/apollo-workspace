@@ -3,12 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style id="auth-blocker-style">html{visibility:hidden!important;}</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
-<script src="/supabase-config.js"></script>
-<script src="/auth.js"></script>
-<title>Valencia Data Base · CRM & Marketing Tool</title>
-<link rel="icon" type="image/png" href="/logo.png">
+<title>Apollo Workbench · CRM & Marketing Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -71,12 +66,10 @@ html, body {
 .brand-logo {
   width: 32px; height: 32px;
   border-radius: 9px;
-  background: #ffffff;
+  background: var(--grad-1);
   display: grid; place-items: center;
-  padding: 3px; box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(20, 184, 184, 0.28);
+  box-shadow: 0 4px 12px rgba(168,85,247,0.3);
 }
-.brand-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .brand-text { line-height: 1.1; }
 .brand-name {
   font-family: var(--display);
@@ -784,6 +777,223 @@ html, body {
 }
 .var-chip:hover { background: rgba(99, 102, 241, 0.18); color: var(--text-hi); }
 
+/* Compose modal sizing */
+.compose-modal { width: min(720px, 96vw); max-height: 92vh; }
+
+/* Reminder popup */
+.reminder-popup-modal { width: min(620px, 96vw); max-height: 88vh; }
+.rem-popup-card {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.rem-popup-card.overdue { border-left-color: var(--rose); }
+.rem-popup-card .date-blk {
+  text-align: center;
+  font-family: var(--mono);
+  border-right: 1px solid var(--border);
+  padding-right: 10px;
+}
+.rem-popup-card .date-blk .d {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-hi);
+}
+.rem-popup-card .date-blk .m {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+.rem-popup-card .info { min-width: 0; }
+.rem-popup-card .info .name {
+  font-weight: 600;
+  color: var(--text-hi);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rem-popup-card .info .ctx {
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rem-popup-card .info .nt {
+  color: var(--text);
+  font-size: 11.5px;
+  margin-top: 5px;
+  padding: 5px 8px;
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: 6px;
+  border-left: 2px solid var(--amber);
+}
+.rem-popup-card .acts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rem-popup-card .acts .btn {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.rem-popup-shown-times {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 1px 6px;
+  background: rgba(245, 158, 11, 0.18);
+  color: var(--amber);
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Permission banner */
+.notif-banner {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-hi);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 360px;
+  z-index: 480;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.notif-banner-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--indigo);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.notif-banner-text {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.notif-banner-text b { color: var(--text-hi); }
+.notif-banner-actions { display: flex; gap: 6px; flex-direction: column; }
+.notif-banner-actions .btn { height: 26px; padding: 0 10px; font-size: 11px; }
+
+/* Translate icon — shown next to non-English titles */
+.title-with-tx {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+.title-with-tx > .t-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.tx-icon {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--cyan);
+  font-size: 9.5px;
+  font-family: var(--mono);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  transition: all 0.15s ease;
+  letter-spacing: 0.05em;
+}
+.tx-icon:hover {
+  background: var(--cyan);
+  color: var(--bg-0);
+  border-color: var(--cyan);
+}
+.compose-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.compose-tab {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.compose-tab:hover { color: var(--text); border-color: var(--border-hi); }
+.compose-tab.active {
+  background: var(--indigo);
+  color: white;
+  border-color: var(--indigo);
+}
+.compose-load-html {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.field-text.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre;
+  word-break: break-all;
+}
+.html-preview-wrap {
+  margin-top: 6px;
+}
+.html-preview {
+  width: 100%;
+  height: 220px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.field-select {
+  padding: 8px 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-hi);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  outline: none;
+}
+.field-select:focus { border-color: var(--indigo); }
+.btn.sm.danger { color: var(--rose); border-color: rgba(244,63,94,0.3); }
+.btn.sm.danger:hover { background: rgba(244,63,94,0.1); border-color: var(--rose); }
+
 /* ============ DRAWER (contact detail) ============ */
 .drawer {
   position: fixed;
@@ -1283,57 +1493,6 @@ html, body {
   color: var(--dim);
 }
 
-/* Company-grouped pipeline card (new) */
-.pipe-card.is-company { cursor: default; padding: 10px 12px; }
-.pipe-card.is-company:hover { transform: none; background: var(--bg-2); border-color: var(--border); }
-.pipe-card-co-head {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; margin-bottom: 2px;
-}
-.pipe-card-co-name {
-  font-size: 13px; font-weight: 700; color: var(--text-hi);
-  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  letter-spacing: -0.01em;
-}
-.pipe-card-co-count {
-  background: var(--bg-3); border: 1px solid var(--border-hi);
-  padding: 1px 7px; border-radius: 10px;
-  font-size: 10.5px; font-weight: 600; color: var(--muted);
-  font-family: var(--mono); flex-shrink: 0;
-}
-.pipe-card-co-country {
-  font-family: var(--mono);
-  font-size: 9.5px; color: var(--muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  margin-bottom: 7px;
-}
-.pipe-card-people-list {
-  display: flex; flex-direction: column; gap: 1px;
-  border-top: 1px solid var(--border);
-  padding-top: 5px; margin: 0 -6px;
-}
-.pipe-card-person {
-  padding: 5px 8px; border-radius: 5px;
-  cursor: pointer; transition: background 0.12s;
-  display: flex; flex-direction: column; gap: 1px;
-  min-width: 0;
-}
-.pipe-card-person:hover { background: rgba(99,102,241,0.09); }
-.pipe-card-person-name {
-  font-size: 12px; color: var(--text); font-weight: 500;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.pipe-card-person-em {
-  font-size: 10.5px; color: var(--dim); font-family: var(--mono);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.pipe-card-person-icons {
-  display: inline-flex; gap: 4px; margin-left: 6px;
-  vertical-align: middle;
-}
-.pipe-card-person .rem-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
-.pipe-card-person .rem-dot.overdue { background: var(--rose); animation: ping 2s infinite; }
-
 /* ============ REMINDERS ============ */
 .rem-root {
   display: flex;
@@ -1452,7 +1611,6 @@ html, body {
 .rem-info { min-width: 0; }
 .rem-info .name { font-weight: 600; color: var(--text-hi); font-size: 13.5px; }
 .rem-info .context { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
-.rem-info .rem-web { color: var(--indigo); font-family: var(--mono); font-weight: 500; }
 .rem-info .note {
   color: var(--text);
   font-size: 12px;
@@ -1916,191 +2074,6 @@ html, body {
   .table-row > :nth-child(4),
   .table-row > :nth-child(6) { display: none; }
 }
-
-/* ============ COMPOSE EMAIL ============ */
-.compose-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 12px; margin-right: 10px;
-  background: #6366f1; color: white;
-  border: none; border-radius: 8px;
-  font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: background .15s;
-}
-.compose-btn:hover { background: #4f46e5; }
-.compose-btn svg { width: 14px; height: 14px; }
-
-.compose-overlay {
-  position: fixed; inset: 0;
-  background: rgba(7, 9, 18, 0.75);
-  backdrop-filter: blur(4px);
-  display: none; align-items: flex-start; justify-content: center;
-  z-index: 10000; padding: 40px 20px 20px; overflow-y: auto;
-}
-.compose-overlay.open { display: flex; }
-.compose-modal {
-  width: 100%; max-width: 680px;
-  background: #0d1121; border: 1px solid #1c2440; border-radius: 14px;
-  box-shadow: 0 40px 100px rgba(0,0,0,.6);
-  overflow: hidden; display: flex; flex-direction: column;
-  max-height: calc(100vh - 60px);
-}
-.compose-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 18px; background: #141a2e; border-bottom: 1px solid #1c2440;
-}
-.compose-title { font-size: 13px; font-weight: 600; color: #e5e7eb; letter-spacing: .02em; }
-.compose-close {
-  background: transparent; border: none; color: #94a3b8;
-  font-size: 22px; line-height: 1; cursor: pointer;
-  width: 28px; height: 28px; border-radius: 6px;
-}
-.compose-close:hover { background: #1c2440; color: white; }
-.compose-body { padding: 4px 18px 10px; overflow-y: auto; flex: 1; }
-
-/* Gmail-style recipient row */
-.compose-row {
-  display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid #1c2440;
-  padding: 8px 0; min-height: 42px;
-}
-.compose-row > label {
-  width: 44px; font-size: 12px; color: #94a3b8;
-  font-weight: 500; flex-shrink: 0;
-}
-.chip-field {
-  flex: 1; display: flex; flex-wrap: wrap;
-  align-items: center; gap: 4px; min-height: 28px;
-  cursor: text;
-}
-.chip-field input {
-  flex: 1; min-width: 180px; background: transparent; border: none;
-  color: #e5e7eb; font-size: 13px; padding: 4px 0; outline: none;
-}
-.cc-bcc-toggle { display: flex; gap: 2px; flex-shrink: 0; }
-.cc-bcc-toggle button {
-  background: transparent; border: none; color: #94a3b8;
-  padding: 4px 8px; font-size: 12px; font-weight: 500;
-  cursor: pointer; border-radius: 6px;
-}
-.cc-bcc-toggle button:hover { color: #e5e7eb; background: #141a2e; }
-.cc-bcc-toggle button.active { color: #6366f1; }
-
-.chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: #1c2440; border: 1px solid #2a3452; border-radius: 16px;
-  padding: 2px 4px 2px 10px;
-  font-size: 12px; color: #e5e7eb;
-  max-width: 100%;
-  transition: background .12s, border-color .12s;
-}
-.chip:hover { background: #2a3452; border-color: #3d4a6e; }
-.chip.invalid { background: rgba(244, 63, 94, 0.14); border-color: #f43f5e; color: #fecdd3; }
-.chip-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip-caret, .chip-x {
-  background: transparent; border: none; color: #94a3b8;
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 14px; line-height: 1;
-}
-.chip-caret { font-size: 11px; }
-.chip-caret:hover, .chip-x:hover { background: #3d4a6e; color: white; }
-.chip-x { font-size: 16px; }
-
-.chip-menu {
-  position: fixed; z-index: 10002;
-  background: #141a2e; border: 1px solid #2a3452; border-radius: 8px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.5);
-  padding: 4px; min-width: 150px;
-}
-.chip-menu button {
-  display: block; width: 100%; text-align: left;
-  background: transparent; border: none; color: #e5e7eb;
-  padding: 8px 12px; font-size: 12px; cursor: pointer; border-radius: 4px;
-}
-.chip-menu button:hover:not(:disabled) { background: #1c2440; }
-.chip-menu button:disabled { opacity: .4; cursor: default; }
-.chip-menu button.danger { color: #f87171; }
-.chip-menu button.danger:hover { background: rgba(244, 63, 94, 0.1); }
-.chip-menu-sep { height: 1px; background: #2a3452; margin: 4px 0; }
-
-.subject-row input {
-  flex: 1; background: transparent; border: none; color: #e5e7eb;
-  font-size: 14px; font-weight: 500; padding: 4px 0; outline: none;
-}
-.subject-row input::placeholder { color: #64748b; }
-
-.compose-tabs { display: flex; gap: 4px; margin: 10px 0 8px; border-bottom: 1px solid #1c2440; }
-.compose-tab {
-  background: transparent; border: none; color: #94a3b8;
-  padding: 8px 14px; font-size: 12px; font-weight: 500;
-  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
-}
-.compose-tab.active { color: #e5e7eb; border-bottom-color: #6366f1; }
-.compose-tab:hover { color: #e5e7eb; }
-.compose-panel textarea {
-  width: 100%; min-height: 200px; box-sizing: border-box;
-  background: #141a2e; border: 1px solid #1c2440; border-radius: 8px;
-  color: #e5e7eb; padding: 12px; font-size: 13px;
-  font-family: inherit; resize: vertical; outline: none;
-  line-height: 1.5;
-}
-.compose-panel textarea:focus { border-color: #6366f1; }
-.html-drop {
-  border: 2px dashed #1c2440; border-radius: 10px;
-  padding: 28px 20px; text-align: center;
-  background: #0a0e1c; transition: border-color .15s, background .15s;
-}
-.html-drop.dragover { border-color: #6366f1; background: rgba(99,102,241,.06); }
-.html-drop-text { font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
-.html-drop-text strong { color: #e5e7eb; font-weight: 600; }
-.html-drop-link { color: #6366f1; text-decoration: underline; cursor: pointer; }
-.html-drop-hint { font-size: 11px; color: #64748b; }
-.html-preview {
-  border: 1px solid #1c2440; border-radius: 10px;
-  overflow: hidden; background: #ffffff;
-}
-.html-preview-head {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px; background: #141a2e; border-bottom: 1px solid #1c2440;
-  font-size: 12px; color: #94a3b8;
-}
-.html-clear {
-  background: transparent; border: 1px solid #1c2440; color: #94a3b8;
-  padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;
-}
-.html-clear:hover { background: #f43f5e; color: white; border-color: #f43f5e; }
-.html-preview iframe { width: 100%; height: 260px; border: none; display: block; }
-.compose-foot {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 18px; border-top: 1px solid #1c2440; gap: 12px;
-  background: #0a0e1c;
-}
-.compose-status { font-size: 11px; color: #94a3b8; flex: 1; line-height: 1.4; }
-.compose-actions { display: flex; gap: 8px; }
-.compose-btn-sec, .compose-btn-pri {
-  padding: 9px 18px; border-radius: 8px;
-  font-size: 13px; font-weight: 600; cursor: pointer; border: none;
-}
-.compose-btn-sec { background: transparent; color: #94a3b8; border: 1px solid #1c2440; }
-.compose-btn-sec:hover { background: #141a2e; color: #e5e7eb; }
-.compose-btn-pri { background: #6366f1; color: white; display: inline-flex; align-items: center; gap: 6px; }
-.compose-btn-pri:hover { background: #4f46e5; }
-.compose-btn-pri:disabled { opacity: .5; cursor: not-allowed; }
-.compose-toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: #0d1121; border: 1px solid #1c2440; color: #e5e7eb;
-  padding: 12px 18px; border-radius: 10px; font-size: 13px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 10003;
-  opacity: 0; pointer-events: none; transition: opacity .2s;
-  max-width: 440px;
-}
-.compose-toast.show { opacity: 1; }
-.compose-toast.ok { border-color: #10b981; }
-.compose-toast.err { border-color: #f43f5e; }
-.compose-fallback {
-  display: inline-block; color: #6366f1; text-decoration: underline;
-  margin-left: 4px; cursor: pointer;
-}
 </style>
 </head>
 <body>
@@ -2119,10 +2092,12 @@ html, body {
   <header class="topbar">
     <div class="brand">
       <div class="brand-logo">
-        <img src="/logo.png" alt="Valencia">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
       </div>
       <div class="brand-text">
-        <div class="brand-name">Valencia Data Base</div>
+        <div class="brand-name">Apollo Workbench</div>
         <div class="brand-tag">CRM · Marketing · v2.0</div>
       </div>
     </div>
@@ -2132,10 +2107,6 @@ html, body {
       <span class="search-shortcut">⌘K</span>
     </div>
     <div class="top-actions">
-      <button class="compose-btn" id="composeBtn" title="Compose email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span>Compose</span>
-      </button>
       <nav class="page-nav">
         <a class="page-nav-btn" href="./index.html" title="Home · pick a tool">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -2191,6 +2162,7 @@ html, body {
           </div>
           <div class="filter-item" data-quick="fav"><div class="filter-check"></div><div class="filter-text">⭐ Favorites</div><div class="filter-count" id="favCount">0</div></div>
           <div class="filter-item" data-quick="has-email"><div class="filter-check"></div><div class="filter-text">Has email</div><div class="filter-count" id="emailCount">0</div></div>
+          <div class="filter-item pharma-quick" data-quick="pharma" title="Procurement, R&D, Production, Quality, Founder, Plant Head — excludes Sales, Marketing, HR, IT"><div class="filter-check"></div><div class="filter-text" style="font-weight:600;">💊 Pharma B2B targets</div><div class="filter-count" id="pharmaCount">—</div></div>
           <div class="filter-item" data-quick="c-suite"><div class="filter-check"></div><div class="filter-text">C-Suite / Founders</div><div class="filter-count">—</div></div>
           <div class="filter-item" data-quick="decision"><div class="filter-check"></div><div class="filter-text">Decision-makers</div><div class="filter-count">—</div></div>
           <div class="filter-item" data-quick="in-pipe"><div class="filter-check"></div><div class="filter-text">In pipeline</div><div class="filter-count" id="pipeCount">0</div></div>
@@ -2379,7 +2351,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v2.7-scrollable-people · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.0-pharma-smtp-popup · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2399,7 +2371,7 @@ html, body {
 
 <!-- COMPOSE MODAL -->
 <div class="modal-backdrop" id="modalBackdrop"></div>
-<div class="modal" id="composeModal">
+<div class="modal compose-modal" id="composeModal">
   <div class="modal-head">
     <div class="modal-title">Compose Email</div>
     <button class="modal-close" id="composeClose">
@@ -2408,9 +2380,26 @@ html, body {
   </div>
   <div class="modal-body">
     <div class="field-group">
-      <label class="field-label">Recipients</label>
-      <div class="field-hint" id="recipientHint">0 emails selected</div>
+      <label class="field-label">From (sender name shown in template variables)</label>
+      <input class="field-input" id="composeFrom" placeholder="Your Name &lt;you@yourdomain.com&gt;">
+      <div class="field-hint">Saved between sessions. Used as From: header when sending via SMTP.</div>
     </div>
+
+    <div class="field-group">
+      <label class="field-label">To <span style="color:var(--emerald);font-weight:600;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:11px;margin-left:6px;" id="recipientHint">0 emails selected</span></label>
+      <div class="field-hint">Selected from the list. Each contact gets its own personalised email when "Send via SMTP" is used.</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">CC (optional, comma-separated)</label>
+      <input class="field-input" id="composeCc" placeholder="manager@yourdomain.com, team@yourdomain.com">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">BCC (optional, comma-separated — applies to every send)</label>
+      <input class="field-input" id="composeBcc" placeholder="archive@yourdomain.com">
+    </div>
+
     <div class="field-group">
       <label class="field-label">Subject</label>
       <input class="field-input" id="composeSubject" placeholder="Your subject line…">
@@ -2421,22 +2410,80 @@ html, body {
         <span class="var-chip" data-var="{{title}}">{{title}}</span>
       </div>
     </div>
+
     <div class="field-group">
-      <label class="field-label">Message</label>
-      <textarea class="field-text" id="composeBody" placeholder="Hi {{name}},&#10;&#10;I came across {{company}} while researching leading firms in {{country}}…"></textarea>
-      <div class="field-hint">Tip: Opening the mail client also logs the send against each recipient's timeline with a follow-up reminder in 7 days.</div>
+      <div class="compose-tabs">
+        <button class="compose-tab active" data-body-tab="text">Plain Text</button>
+        <button class="compose-tab" data-body-tab="html">HTML</button>
+        <label class="compose-load-html btn sm" title="Load .html file as body">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Load .html
+          <input type="file" id="composeHtmlFile" accept=".html,.htm,text/html" hidden>
+        </label>
+      </div>
+      <div id="composeTextWrap">
+        <textarea class="field-text" id="composeBody" placeholder="Hi {{name}},&#10;&#10;I came across {{company}} while researching leading firms in {{country}}…"></textarea>
+      </div>
+      <div id="composeHtmlWrap" style="display:none;">
+        <textarea class="field-text mono" id="composeHtmlBody" placeholder="&lt;p&gt;Hi {{name}},&lt;/p&gt;&#10;&lt;p&gt;I came across {{company}}…&lt;/p&gt;" style="font-family:var(--mono);font-size:12px;min-height:200px;"></textarea>
+        <div class="html-preview-wrap">
+          <div class="field-label" style="margin:8px 0 4px;">Preview (first selected recipient)</div>
+          <iframe id="composeHtmlPreview" class="html-preview"></iframe>
+        </div>
+      </div>
+      <div class="field-hint">Variables get replaced per recipient. Plain text used for mailto:; HTML used for SMTP send.</div>
     </div>
+
     <div class="field-group">
-      <label class="field-label">
+      <label class="field-label">Templates</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <select class="field-select" id="composeTplSelect" style="flex:1;min-width:200px;"><option value="">— Saved templates —</option></select>
+        <button class="btn sm" id="composeTplLoad">Load</button>
+        <button class="btn sm" id="composeTplSave">Save current as…</button>
+        <button class="btn sm danger" id="composeTplDelete">Delete</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" style="text-transform:none;font-family:var(--sans);font-size:13px;letter-spacing:0;color:var(--text);">
         <input type="checkbox" id="autoReminder" checked style="margin-right:6px;"> Auto-set follow-up reminder (+7 days) for sent contacts
       </label>
     </div>
   </div>
   <div class="modal-foot">
-    <button class="btn" id="composeCopyBcc">Copy BCC list</button>
-    <button class="btn" id="composeDownloadCsv">Export CSV</button>
-    <button class="btn" id="composeLogAll">Log send · mark stage</button>
-    <button class="btn primary" id="composeSendFirst">Open in mail client</button>
+    <button class="btn" id="composeCopyBcc" title="Copy all selected emails as BCC list">Copy BCC list</button>
+    <button class="btn" id="composeCopyHtml" title="Copy HTML body to clipboard (paste into Gmail / Outlook)">Copy HTML body</button>
+    <button class="btn" id="composeDownloadCsv" title="Export selected as CSV">Export CSV</button>
+    <button class="btn" id="composeOpenGmail" title="Open in Gmail web compose with all fields prefilled">Open in Gmail</button>
+    <button class="btn" id="composeLogAll" title="Mark all as Contacted + log send activity">Log all as sent</button>
+    <button class="btn primary" id="composeSendSmtp" title="Send via SMTP (requires backend / Vercel env vars)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      Send via SMTP
+    </button>
+  </div>
+</div>
+
+<!-- REMINDER POPUP MODAL — fires when reminders come due, up to 3x/day per reminder -->
+<div class="modal reminder-popup-modal" id="remPopupModal">
+  <div class="modal-head" style="background:linear-gradient(135deg,rgba(245,158,11,0.14),transparent 70%);border-bottom:1px solid rgba(245,158,11,0.3);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:30px;height:30px;border-radius:8px;background:rgba(245,158,11,0.18);display:grid;place-items:center;color:var(--amber);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="modal-title" style="color:var(--amber);">Follow-up reminders due</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;" id="remPopupSummary">—</div>
+      </div>
+    </div>
+    <button class="modal-close" id="remPopupClose" title="Dismiss (will reappear in ~3 hours)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="modal-body" id="remPopupBody"></div>
+  <div class="modal-foot">
+    <button class="btn" id="remPopupSnoozeAll">Snooze all 1 day</button>
+    <button class="btn" id="remPopupOpenView">Open Reminders view</button>
+    <button class="btn primary" id="remPopupDismiss">Dismiss for now</button>
   </div>
 </div>
 
@@ -2601,6 +2648,38 @@ function inferRole(title) {
   if (!title) return null;
   for (const r of ROLE_RULES) if (r.match.test(title)) return r.key;
   return null;
+}
+
+// ============ PHARMA B2B TARGETING ============
+// People who are actually in the buying / technical / decision chain at a pharma manufacturer.
+// Doesn't delete any contact — just filters the visible set when "Pharma B2B" is active.
+const PHARMA_INCLUDE = /\b(ceo|coo|cto|cfo|chief|founder|owner|president|chairman|chairperson|managing\s*director|^md\b|director|head|vp\b|vice[\s-]?president|partner|principal|gm\b|general\s*manager|procurement|purchas|buyer|sourcing|supply\s*chain|vendor|production|manufactur|operations?|plant|factory|site|formulation|f\s*&\s*d|r\s*&\s*d|r\s*and\s*d|research\s*&\s*development|new\s*product|quality|qa\b|qc\b|regulat|compliance|gmp|cgmp|pharmacovigil|api\b|active\s*pharmaceutical|drug\s*substance|technical|process\s*engineer|chemical\s*engineer|chemist|pharmacist|chairman|trustee)/i;
+const PHARMA_EXCLUDE = /\b(sales|business\s*development|^bd\b|account\s*executive|account\s*manager|export\s*sales|marketing|brand|advertis|customer\s*service|customer\s*support|customer\s*care|^hr\b|human\s*resources|recruit|talent|payroll|admin(istrative)?\s*(assistant|coordinator|officer)?|secretary|receptionist|accountant|bookkeep|software\s*develop|web\s*develop|programmer|graphic\s*design|content\s*writer|social\s*media|^seo\b|digital\s*marketing|copywriter|teacher|professor|student|^intern\b|trainee|driver|cleaner|janitor|guard)/i;
+
+function isPharmaTarget(title) {
+  if (!title) return false;
+  if (PHARMA_EXCLUDE.test(title)) return false;
+  return PHARMA_INCLUDE.test(title);
+}
+
+// ============ LANGUAGE / TRANSLATION HELPER ============
+// Detect titles likely in a non-English script. Doesn't delete data — just flags for translation hint.
+const NON_LATIN_RE = /[^ -ɏḀ-ỿ\s\d\W_]/;  // anything outside extended Latin = likely foreign script
+const FOREIGN_LATIN_TOKENS = /\b(direttore|gerente|directeur|directora|director(a)?\b|ge(s|st)or|gestion|comprador|achete?ur|akup|satin\s?al|encarregad|responsable|responsabile|jefe|chefe|chefin|propriet|presidente|presidente|presidenta|fondateur|fondatrice|kierown|menedz|kup|nakup|propriedad|directeur|directrice|wlasciciel)/i;
+function looksForeign(title) {
+  if (!title) return false;
+  return NON_LATIN_RE.test(title) || FOREIGN_LATIN_TOKENS.test(title);
+}
+function googleTranslateUrl(text) {
+  return 'https://translate.google.com/?sl=auto&tl=en&op=translate&text=' + encodeURIComponent(text || '');
+}
+// Render a title with a translate icon if it looks non-English
+function titleHTML(title, opts) {
+  const fallback = (opts && opts.fallback) || '<span class="cell-muted">—</span>';
+  if (!title) return fallback;
+  const safe = escapeHtml(title);
+  if (!looksForeign(title)) return safe;
+  return `<span class="title-with-tx"><span class="t-text">${safe}</span><a class="tx-icon" href="${googleTranslateUrl(title)}" target="_blank" rel="noopener noreferrer" title="Translate to English (opens Google Translate)" onclick="event.stopPropagation()">EN</a></span>`;
 }
 
 // ============ STATE ============
@@ -2801,6 +2880,9 @@ function buildFilterOptions() {
   const decision = cSuite + roleMap.get('vp').count + roleMap.get('director').count + roleMap.get('head').count;
   document.querySelector('[data-quick="c-suite"] .filter-count').textContent = fmt(cSuite);
   document.querySelector('[data-quick="decision"] .filter-count').textContent = fmt(decision);
+  // Pharma B2B target count — pre-compute once at load
+  const pharmaTotal = state.contacts.reduce((acc, r) => acc + (isPharmaTarget(r.t) ? 1 : 0), 0);
+  $('pharmaCount').textContent = fmt(pharmaTotal);
 
   renderStageFilters();
   renderRoleFilters();
@@ -2894,6 +2976,7 @@ function applyFilters() {
     }
     if (qs.has('fav') && !state.favorites.has(r.id)) continue;
     if (qs.has('has-email') && !r.em) continue;
+    if (qs.has('pharma') && !isPharmaTarget(r.t)) continue;
     if (qs.has('c-suite') && r.role !== 'c-suite') continue;
     if (qs.has('decision') && !decisionRoles.has(r.role)) continue;
     if (qs.has('in-pipe') && !crm.get(r.id).status) continue;
@@ -2957,7 +3040,7 @@ function renderTable() {
             <div class="s">${r.s}</div>
           </div>
         </div>
-        <div class="cell-text">${escapeHtml(r.t) || '<span class="cell-muted">—</span>'}</div>
+        <div class="cell-text">${titleHTML(r.t)}</div>
         <div class="cell-text">${escapeHtml(r.c) || '<span class="cell-muted">—</span>'}</div>
         <div class="cell-email">
           <div class="em">${escapeHtml(r.em) || '<span class="cell-muted">no email</span>'}</div>
@@ -3090,10 +3173,18 @@ function closeStageModal() {
 }
 
 // ============ COMPOSE ============
+const TPL_KEY = 'apollo_email_templates_v1';
+const FROM_KEY = 'apollo_from_address';
+function loadTemplates() { return JSON.parse(localStorage.getItem(TPL_KEY) || '{}'); }
+function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
+
 function openCompose() {
   const n = getSelectedRecords().filter(r => r.em).length;
   if (n === 0) { toast('No emails in selection', 'info'); return; }
   $('recipientHint').textContent = fmt(n) + ' email' + (n !== 1 ? 's' : '') + ' selected';
+  $('composeFrom').value = localStorage.getItem(FROM_KEY) || '';
+  refreshTplDropdown();
+  refreshHtmlPreview();
   $('modalBackdrop').classList.add('active');
   $('composeModal').classList.add('active');
 }
@@ -3101,22 +3192,135 @@ function closeCompose() {
   $('modalBackdrop').classList.remove('active');
   $('composeModal').classList.remove('active');
 }
+
+function getComposeBodies(r) {
+  const subj = renderTemplate($('composeSubject').value, r);
+  const text = renderTemplate($('composeBody').value, r);
+  const html = renderTemplate($('composeHtmlBody').value, r);
+  return { subj, text, html };
+}
+
+function refreshHtmlPreview() {
+  const sel = getSelectedRecords().filter(r => r.em);
+  const r = sel[0] || { n: 'Sample Person', c: 'Sample Company', co: 'Sample Country', t: 'Director' };
+  const html = renderTemplate($('composeHtmlBody').value || '<p style="font-family:system-ui,sans-serif;color:#333;padding:20px;">HTML preview will appear here as you type.</p>', r);
+  const iframe = $('composeHtmlPreview');
+  if (iframe) iframe.srcdoc = html;
+}
+
+function refreshTplDropdown() {
+  const tpls = loadTemplates();
+  const sel = $('composeTplSelect');
+  sel.innerHTML = '<option value="">— Saved templates —</option>' +
+    Object.keys(tpls).map(name => `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`).join('');
+}
+
 async function composeCopyBcc() {
   const emails = getSelectedRecords().filter(r => r.em).map(r => r.em).join(', ');
   const ok = await copyText(emails);
   toast(ok ? 'Copied BCC list' : 'Copy failed');
 }
-function composeSendFirst() {
+
+async function composeCopyHtml() {
+  const sel = getSelectedRecords().filter(r => r.em);
+  const r = sel[0] || { n: '', c: '', co: '', t: '' };
+  const html = renderTemplate($('composeHtmlBody').value, r);
+  if (!html.trim()) { toast('HTML body is empty', 'info'); return; }
+  // Try to copy as rich HTML so paste into Gmail keeps formatting
+  if (navigator.clipboard && window.ClipboardItem) {
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const txt = new Blob([html], { type: 'text/plain' });
+      await navigator.clipboard.write([new ClipboardItem({ 'text/html': blob, 'text/plain': txt })]);
+      toast('Copied HTML — paste into Gmail / Outlook compose');
+      return;
+    } catch (e) { /* fall through to plain text fallback */ }
+  }
+  const ok = await copyText(html);
+  toast(ok ? 'Copied HTML (as text — paste into HTML-aware editor)' : 'Copy failed');
+}
+
+function composeOpenGmail() {
   const sel = getSelectedRecords().filter(r => r.em);
   if (sel.length === 0) return;
   const r = sel[0];
-  const subj = renderTemplate($('composeSubject').value, r);
-  const body = renderTemplate($('composeBody').value, r);
-  const url = `mailto:${encodeURIComponent(r.em)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
-  window.location.href = url;
-  logSendForContact(r.id, subj);
-  toast(`Opened mail for ${r.n || r.em} · logged`);
+  const { subj, text } = getComposeBodies(r);
+  const cc = $('composeCc').value.trim();
+  const bcc = mergeBcc(sel.slice(1).map(x => x.em), $('composeBcc').value.trim());
+  const params = new URLSearchParams({
+    view: 'cm', fs: '1', tf: '1',
+    to: r.em, su: subj, body: text || stripHtml(renderTemplate($('composeHtmlBody').value, r))
+  });
+  if (cc) params.set('cc', cc);
+  if (bcc) params.set('bcc', bcc);
+  window.open('https://mail.google.com/mail/?' + params.toString(), '_blank');
+  logSendForContact(r.id, subj, $('autoReminder').checked);
+  toast(`Opened Gmail for ${r.n || r.em} · logged`);
 }
+
+function mergeBcc(extra, existing) {
+  const all = [...(existing ? existing.split(',').map(s => s.trim()).filter(Boolean) : []), ...extra];
+  return all.join(', ');
+}
+function stripHtml(html) {
+  return (html || '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+async function composeSendSmtp() {
+  const sel = getSelectedRecords().filter(r => r.em);
+  if (sel.length === 0) { toast('No emails in selection', 'info'); return; }
+  const from = $('composeFrom').value.trim();
+  if (!from) { toast('Set a "From" address first', 'warn'); $('composeFrom').focus(); return; }
+  localStorage.setItem(FROM_KEY, from);
+
+  const ccGlobal = $('composeCc').value.trim();
+  const bccGlobal = $('composeBcc').value.trim();
+  const auto = $('autoReminder').checked;
+
+  if (!confirm(`Send via SMTP to ${sel.length} contact${sel.length !== 1 ? 's' : ''}?\n\nThe API endpoint /api/send must be configured with SMTP credentials (Vercel env vars or local server).\n\nClick OK to proceed.`)) return;
+
+  let sent = 0, failed = 0;
+  const setStatus = (msg) => { const d = $('diagBar'); if (d) d.textContent = msg; };
+  setStatus('Sending 0/' + sel.length + '…');
+
+  for (let i = 0; i < sel.length; i++) {
+    const r = sel[i];
+    const { subj, text, html } = getComposeBodies(r);
+    const payload = {
+      from,
+      to: r.em,
+      cc: ccGlobal || undefined,
+      bcc: bccGlobal || undefined,
+      subject: subj,
+      text: text || stripHtml(html),
+      html: html || undefined,
+    };
+    try {
+      const res = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(res.status + ' ' + err.slice(0, 200));
+      }
+      sent++;
+      logSendForContact(r.id, subj, auto);
+      setStatus(`Sent ${sent}/${sel.length}…`);
+    } catch (e) {
+      failed++;
+      console.error('[apollo] SMTP send failed for', r.em, e);
+      crm.logActivity(r.id, 'email', `SMTP send FAILED: ${e.message}`);
+    }
+  }
+  renderStageFilters(); renderTable(); refreshTabCounts();
+  if (failed === 0) toast(`Sent ${sent} emails via SMTP`);
+  else toast(`Sent ${sent}, failed ${failed} — check console`, 'warn');
+  setStatus(`SMTP complete · ${sent} sent · ${failed} failed`);
+  if (sent > 0) closeCompose();
+}
+
 function composeLogAll() {
   const sel = getSelectedRecords().filter(r => r.em);
   if (sel.length === 0) return;
@@ -3132,6 +3336,7 @@ function composeLogAll() {
   toast(`Logged send to ${fmt(sel.length)} contacts · stage → Contacted`);
   closeCompose();
 }
+
 function logSendForContact(id, subject, autoReminder = true) {
   const prev = crm.get(id).status;
   if (!prev || prev === 'new') crm.set(id, { status: 'contacted' });
@@ -3144,6 +3349,7 @@ function logSendForContact(id, subject, autoReminder = true) {
     }
   }
 }
+
 function renderTemplate(tpl, r) {
   return (tpl || '')
     .replace(/\{\{name\}\}/g, (r.n || '').split(' ')[0] || 'there')
@@ -3180,6 +3386,7 @@ function openDetail(id) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>` : '<div></div>'}
       </div>
+      <div class="d-row"><div class="d-row-label">Title</div><div class="d-row-val">${titleHTML(r.t, {fallback:'<span style="color:var(--muted)">—</span>'})}</div><div></div></div>
       <div class="d-row"><div class="d-row-label">Company</div><div class="d-row-val">${escapeHtml(r.c) || '—'}</div><div></div></div>
       <div class="d-row"><div class="d-row-label">Market</div><div class="d-row-val">${escapeHtml(r.co)}</div><div></div></div>
       <div class="d-row"><div class="d-row-label">Role Tag</div><div class="d-row-val">${ROLE_RULES.find(x => x.key === r.role)?.label || '<span style="color:var(--muted)">Unclassified</span>'}</div><div></div></div>
@@ -3887,33 +4094,13 @@ function renderPipeline() {
       if (r) { buckets[e.status].push({ r, c: e }); totals[e.status]++; }
     }
   }
-
-  // Group each stage's contacts by company name
-  const grouped = {};
-  for (const s of STAGES) {
-    const key = s.key;
-    const map = new Map();
-    for (const item of buckets[key]) {
-      const coName = (item.r.c || '').trim() || '(No company)';
-      if (!map.has(coName)) map.set(coName, { name: coName, items: [], country: item.r.co || '', lastActivity: '' });
-      const g = map.get(coName);
-      g.items.push(item);
-      const t = item.c.activities?.[0]?.ts || '';
-      if (t > g.lastActivity) g.lastActivity = t;
-    }
-    // Sort companies: most members first, then most recent activity
-    grouped[key] = [...map.values()].sort((a, b) => {
-      if (b.items.length !== a.items.length) return b.items.length - a.items.length;
-      return b.lastActivity.localeCompare(a.lastActivity);
-    });
-    // Sort people within each company by most recent activity
-    grouped[key].forEach(g => g.items.sort((a, b) => {
+  for (const k of Object.keys(buckets)) {
+    buckets[k].sort((a, b) => {
       const ta = a.c.activities?.[0]?.ts || '';
       const tb = b.c.activities?.[0]?.ts || '';
       return tb.localeCompare(ta);
-    }));
+    });
   }
-
   const total = Object.values(totals).reduce((a, b) => a + b, 0);
   const won = totals.won, lost = totals.lost;
   const winRate = (won + lost) > 0 ? Math.round(won / (won + lost) * 100) : 0;
@@ -3923,48 +4110,37 @@ function renderPipeline() {
     <div class="pipe-stat"><b>${fmt(lost)}</b> lost</div>
     <div class="pipe-stat">Win rate · <b>${winRate}%</b></div>
     <div class="view-spacer"></div>
-    <div style="font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:0.08em;">Grouped by company · click a person to open</div>
+    <div style="font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:0.08em;">Click any card to open · stages update from drawer</div>
   `;
-
-  $('pipeBoard').innerHTML = STAGES.map(s => {
-    const companies = grouped[s.key];
-    const peopleCount = totals[s.key];
-    const colBody = companies.length === 0
-      ? '<div style="color:var(--dim);font-size:11px;text-align:center;padding:20px 10px;font-style:italic;">No contacts</div>'
-      : companies.map(g => {
-          const peopleHtml = g.items.map(({ r, c }) => {
-            const rem = c.reminder?.date;
-            const actCount = (c.activities || []).length;
-            return `
-              <div class="pipe-card-person" data-id="${r.id}">
-                <div class="pipe-card-person-name">${escapeHtml(r.n) || '—'}${rem || actCount ? `<span class="pipe-card-person-icons">${rem ? `<span class="rem-dot${new Date(rem) < new Date() ? ' overdue' : ''}" title="Reminder ${fmtDateTime(rem)}"></span>` : ''}${actCount ? `<span style="font-family:var(--mono);font-size:10px;color:var(--dim);">${actCount}</span>` : ''}</span>` : ''}</div>
-                ${r.em ? `<div class="pipe-card-person-em">${escapeHtml(r.em)}</div>` : ''}
-              </div>
-            `;
-          }).join('');
-          return `
-            <div class="pipe-card is-company" style="--st-color:${s.color}">
-              <div class="pipe-card-co-head">
-                <div class="pipe-card-co-name" title="${escapeHtml(g.name)}">${escapeHtml(g.name)}</div>
-                <div class="pipe-card-co-count">${g.items.length}</div>
-              </div>
-              ${g.country ? `<div class="pipe-card-co-country">${escapeHtml(g.country)}</div>` : ''}
-              <div class="pipe-card-people-list">${peopleHtml}</div>
-            </div>
-          `;
-        }).join('');
-    return `
-      <div class="pipe-col" style="--st-color:${s.color};">
-        <div class="pipe-col-head">
-          <div class="pipe-col-title">${s.label}</div>
-          <div class="pipe-col-count">${fmt(peopleCount)}</div>
-        </div>
-        <div class="pipe-col-list">${colBody}</div>
+  $('pipeBoard').innerHTML = STAGES.map(s => `
+    <div class="pipe-col" style="--st-color:${s.color};">
+      <div class="pipe-col-head">
+        <div class="pipe-col-title">${s.label}</div>
+        <div class="pipe-col-count">${fmt(totals[s.key])}</div>
       </div>
-    `;
-  }).join('');
-
-  $('pipeBoard').querySelectorAll('.pipe-card-person').forEach(el => {
+      <div class="pipe-col-list">
+        ${buckets[s.key].length === 0
+          ? '<div style="color:var(--dim);font-size:11px;text-align:center;padding:20px 10px;font-style:italic;">No contacts</div>'
+          : buckets[s.key].map(({ r, c }) => {
+              const rem = c.reminder?.date;
+              return `
+                <div class="pipe-card" style="--st-color:${s.color}" data-id="${r.id}">
+                  <div class="pipe-card-name">${escapeHtml(r.n) || '—'}</div>
+                  <div class="pipe-card-company">${escapeHtml(r.c) || '—'}${r.em ? ' · ' + escapeHtml(r.em) : ''}</div>
+                  <div class="pipe-card-meta">
+                    <span class="pipe-card-country">${escapeHtml(r.co)}</span>
+                    <span class="pipe-card-icons">
+                      ${rem ? `<span class="rem-dot${new Date(rem) < new Date() ? ' overdue' : ''}" title="Reminder ${fmtDateTime(rem)}"></span>` : ''}
+                      ${(c.activities || []).length > 0 ? `<span style="font-family:var(--mono);font-size:10px;">${c.activities.length}</span>` : ''}
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+      </div>
+    </div>
+  `).join('');
+  $('pipeBoard').querySelectorAll('.pipe-card').forEach(el => {
     el.addEventListener('click', () => openDetail(+el.dataset.id));
   });
 }
@@ -4109,43 +4285,22 @@ function renderReminders() {
   });
 }
 
-function reminderWebsite(r) {
-  if (!r || !r.em) return '';
-  const m = r.em.match(/@([^@\s]+)$/);
-  if (!m) return '';
-  const domain = m[1].toLowerCase().trim();
-  if (GENERIC_DOMAINS.has(domain)) return '';
-  return domain.replace(/^www\./i, '');
-}
-
 function renderReminderCard(item, bucket) {
   const r = item.r;
   const d = new Date(item.reminder.date);
   const monthShort = d.toLocaleDateString('en-US', { month: 'short' });
   const cls = bucket === 'overdue' ? 'overdue' : bucket === 'today' ? 'today' : '';
   const st = STAGE_MAP[item.status];
-
-  const companyName = (r.c || '').trim();
-  const personName  = (r.n || '').trim();
-  const primary     = companyName || personName || '—';
-  const website     = reminderWebsite(r);
-
-  const contextBits = [];
-  if (website)   contextBits.push(`<span class="rem-web">${escapeHtml(website)}</span>`);
-  if (companyName && personName) contextBits.push(escapeHtml(personName));
-  if (r.co)      contextBits.push(escapeHtml(r.co));
-  contextBits.push(`${fmtDateTime(item.reminder.date)} (${fmtDate(item.reminder.date)})`);
-
   return `
     <div class="rem-card ${cls}" data-id="${item.id}">
       <div class="rem-date-block">
         <div class="d">${d.getDate()}</div>
         <div class="m">${monthShort}</div>
       </div>
-      <div class="avatar">${initials(primary)}</div>
+      <div class="avatar">${initials(r.n)}</div>
       <div class="rem-info">
-        <div class="name">${escapeHtml(primary)} ${st ? `<span class="status-pill" style="color:${st.color};background:${st.color}22;vertical-align:middle;margin-left:6px;">${st.label}</span>` : ''}</div>
-        <div class="context">${contextBits.join(' · ')}</div>
+        <div class="name">${escapeHtml(r.n) || '—'} ${st ? `<span class="status-pill" style="color:${st.color};background:${st.color}22;vertical-align:middle;margin-left:6px;">${st.label}</span>` : ''}</div>
+        <div class="context">${escapeHtml(r.c) || '—'} · ${escapeHtml(r.co)} · ${fmtDateTime(item.reminder.date)} (${fmtDate(item.reminder.date)})</div>
         ${item.reminder.note ? `<div class="note">${escapeHtml(item.reminder.note)}</div>` : ''}
       </div>
       <div class="rem-actions">
@@ -4246,9 +4401,87 @@ $('bwExportAll').addEventListener('click', bwExportAll);
 $('composeClose').addEventListener('click', closeCompose);
 $('modalBackdrop').addEventListener('click', () => { closeCompose(); closeStageModal(); closeReminderModal(); });
 $('composeCopyBcc').addEventListener('click', composeCopyBcc);
+$('composeCopyHtml').addEventListener('click', composeCopyHtml);
 $('composeDownloadCsv').addEventListener('click', () => exportCsv());
-$('composeSendFirst').addEventListener('click', composeSendFirst);
+$('composeOpenGmail').addEventListener('click', composeOpenGmail);
+$('composeSendSmtp').addEventListener('click', composeSendSmtp);
 $('composeLogAll').addEventListener('click', composeLogAll);
+
+// Compose body Plain/HTML tab toggle
+document.querySelectorAll('.compose-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.compose-tab').forEach(x => x.classList.toggle('active', x === t));
+    const tab = t.dataset.bodyTab;
+    $('composeTextWrap').style.display = tab === 'text' ? '' : 'none';
+    $('composeHtmlWrap').style.display = tab === 'html' ? '' : 'none';
+    if (tab === 'html') refreshHtmlPreview();
+  });
+});
+
+// Live HTML preview as user types
+$('composeHtmlBody').addEventListener('input', debounce(refreshHtmlPreview, 200));
+
+// Load .html file as body
+$('composeHtmlFile').addEventListener('change', async (e) => {
+  const f = e.target.files?.[0]; if (!f) return;
+  const text = await f.text();
+  $('composeHtmlBody').value = text;
+  // Switch to HTML tab automatically
+  document.querySelectorAll('.compose-tab').forEach(x => x.classList.toggle('active', x.dataset.bodyTab === 'html'));
+  $('composeTextWrap').style.display = 'none';
+  $('composeHtmlWrap').style.display = '';
+  refreshHtmlPreview();
+  toast(`Loaded ${f.name} (${Math.round(f.size/1024)} KB)`);
+  e.target.value = '';
+});
+
+// Persist From address
+$('composeFrom').addEventListener('blur', (e) => {
+  localStorage.setItem(FROM_KEY, e.target.value.trim());
+});
+
+// Templates: save / load / delete
+$('composeTplSave').addEventListener('click', () => {
+  const name = prompt('Template name:', '');
+  if (!name) return;
+  const tpls = loadTemplates();
+  tpls[name] = {
+    subject: $('composeSubject').value,
+    text: $('composeBody').value,
+    html: $('composeHtmlBody').value,
+    cc: $('composeCc').value,
+    bcc: $('composeBcc').value,
+    savedAt: new Date().toISOString(),
+  };
+  saveTemplates(tpls);
+  refreshTplDropdown();
+  $('composeTplSelect').value = name;
+  toast(`Template "${name}" saved`);
+});
+$('composeTplLoad').addEventListener('click', () => {
+  const name = $('composeTplSelect').value;
+  if (!name) { toast('Pick a template first', 'info'); return; }
+  const tpls = loadTemplates();
+  const t = tpls[name];
+  if (!t) { toast('Template not found', 'warn'); return; }
+  $('composeSubject').value = t.subject || '';
+  $('composeBody').value = t.text || '';
+  $('composeHtmlBody').value = t.html || '';
+  $('composeCc').value = t.cc || '';
+  $('composeBcc').value = t.bcc || '';
+  refreshHtmlPreview();
+  toast(`Loaded "${name}"`);
+});
+$('composeTplDelete').addEventListener('click', () => {
+  const name = $('composeTplSelect').value;
+  if (!name) { toast('Pick a template first', 'info'); return; }
+  if (!confirm(`Delete template "${name}"?`)) return;
+  const tpls = loadTemplates();
+  delete tpls[name];
+  saveTemplates(tpls);
+  refreshTplDropdown();
+  toast('Template deleted');
+});
 document.querySelectorAll('.var-chip[data-var]').forEach(chip => {
   chip.addEventListener('click', () => {
     const v = chip.dataset.var;
@@ -4299,490 +4532,231 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Periodic reminder check (every 60s) — show toast for newly-overdue
-let lastOverdueCheck = Date.now();
-setInterval(() => {
+// ============ REMINDER POPUP SCHEDULER ============
+// Pop a modal up to 3x/day per due reminder, with a min 3-hour gap between pops.
+// Keeps re-firing until: (a) user clicks Done, (b) user updates the contact's stage,
+// or (c) user clears the reminder. Also fires a desktop Notification if permission granted.
+
+const REM_POPUP_KEY = 'apollo_reminder_popup_v2';
+const remPop = {
+  data: JSON.parse(localStorage.getItem(REM_POPUP_KEY) || '{}'),
+  save() { localStorage.setItem(REM_POPUP_KEY, JSON.stringify(this.data)); },
+  get(id) { return this.data[id] || { lastShownDay: '', shownTimes: 0, lastShownAt: 0, statusAtSet: null }; },
+  set(id, patch) { this.data[id] = { ...this.get(id), ...patch }; this.save(); },
+  clear(id) { delete this.data[id]; this.save(); }
+};
+const MAX_DAILY_POPS = 3;
+const MIN_GAP_MS = 3 * 3600 * 1000; // 3 hours between pops
+
+function todayKey() { const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function shouldPopForId(id) {
+  const s = remPop.get(id);
+  const today = todayKey();
+  if (s.lastShownDay !== today) return true;
+  if ((s.shownTimes || 0) >= MAX_DAILY_POPS) return false;
+  if (Date.now() - (s.lastShownAt || 0) < MIN_GAP_MS) return false;
+  return true;
+}
+function markPopped(id) {
+  const s = remPop.get(id);
+  const today = todayKey();
+  if (s.lastShownDay !== today) { s.lastShownDay = today; s.shownTimes = 0; }
+  s.shownTimes = (s.shownTimes || 0) + 1;
+  s.lastShownAt = Date.now();
+  remPop.set(id, s);
+}
+function getPoppableDue() {
   const now = new Date();
-  const justOverdue = crm.activeReminders().filter(c => {
-    const d = new Date(c.reminder.date);
-    return d > new Date(lastOverdueCheck) && d <= now;
+  return crm.activeReminders()
+    .filter(c => new Date(c.reminder.date) <= now)
+    .filter(c => shouldPopForId(c.id))
+    .map(c => ({ ...c, r: state.contacts[c.id] }))
+    .filter(x => x.r);
+}
+
+function openReminderPopup(items) {
+  if (!items || items.length === 0) return;
+  const overdueCount = items.filter(x => new Date(x.reminder.date) < new Date(new Date().setHours(0,0,0,0))).length;
+  $('remPopupSummary').textContent = `${items.length} due · ${overdueCount} overdue · pops up to 3×/day`;
+
+  $('remPopupBody').innerHTML = items.map(item => {
+    const r = item.r;
+    const d = new Date(item.reminder.date);
+    const popState = remPop.get(item.id);
+    const todayPops = popState.lastShownDay === todayKey() ? (popState.shownTimes || 0) : 0;
+    const overdue = d < new Date(new Date().setHours(0,0,0,0));
+    const stageStr = item.status ? STAGE_MAP[item.status]?.label : 'No stage';
+    return `
+      <div class="rem-popup-card ${overdue ? 'overdue' : ''}" data-id="${item.id}">
+        <div class="date-blk">
+          <div class="d">${d.getDate()}</div>
+          <div class="m">${d.toLocaleDateString('en-US', { month: 'short' })}</div>
+        </div>
+        <div class="info">
+          <div class="name">${escapeHtml(r.n) || '—'}<span class="rem-popup-shown-times" title="Pops today / max">${todayPops + 1}/${MAX_DAILY_POPS}</span></div>
+          <div class="ctx">${escapeHtml(r.c) || '—'} · ${escapeHtml(r.co)} · ${stageStr}</div>
+          ${item.reminder.note ? `<div class="nt">${escapeHtml(item.reminder.note)}</div>` : ''}
+        </div>
+        <div class="acts">
+          <button class="btn primary" data-rem-act="open">Open</button>
+          <button class="btn" data-rem-act="snooze1h">Snooze 1h</button>
+          <button class="btn" data-rem-act="done">Done</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Mark all currently-shown as popped
+  items.forEach(item => markPopped(item.id));
+
+  $('modalBackdrop').classList.add('active');
+  $('remPopupModal').classList.add('active');
+
+  // Wire per-card actions
+  $('remPopupBody').querySelectorAll('.rem-popup-card').forEach(card => {
+    card.querySelectorAll('[data-rem-act]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = +card.dataset.id;
+        const act = btn.dataset.remAct;
+        if (act === 'open') {
+          closeReminderPopup();
+          switchView('all');  // ensure context for drawer
+          openDetail(id);
+        } else if (act === 'snooze1h') {
+          const cur = crm.get(id).reminder;
+          const d = new Date(); d.setHours(d.getHours() + 1);
+          crm.set(id, { reminder: { date: d.toISOString(), note: cur?.note || '' } });
+          // Reset pop state for tomorrow's count
+          remPop.clear(id);
+          card.remove();
+          renderTable(); refreshTabCounts();
+          toast('Snoozed 1h');
+          if (!$('remPopupBody').querySelector('.rem-popup-card')) closeReminderPopup();
+        } else if (act === 'done') {
+          crm.logActivity(id, 'reminder', 'Follow-up completed (from popup)');
+          crm.set(id, { reminder: null });
+          remPop.clear(id);
+          card.remove();
+          renderTable(); refreshTabCounts();
+          if (state.currentView === 'reminders') renderReminders();
+          toast('Marked done');
+          if (!$('remPopupBody').querySelector('.rem-popup-card')) closeReminderPopup();
+        }
+      });
+    });
   });
-  lastOverdueCheck = now.getTime();
-  if (justOverdue.length > 0) {
-    refreshTabCounts();
-    toast(`${justOverdue.length} reminder${justOverdue.length !== 1 ? 's' : ''} now due`, 'warn');
+
+  // Fire desktop notification if permission granted
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    try {
+      const first = items[0];
+      const body = items.length === 1
+        ? `${first.r.n || first.r.em || ''} · ${first.r.c || ''}`
+        : `${items.length} contacts need follow-up`;
+      const notif = new Notification('Apollo Workbench · Reminders due', {
+        body, tag: 'apollo-reminders', renotify: true, requireInteraction: false
+      });
+      notif.onclick = () => { window.focus(); notif.close(); };
+    } catch {}
   }
-}, 60000);
+}
+
+function closeReminderPopup() {
+  $('remPopupModal').classList.remove('active');
+  // Only remove backdrop if no other modal is active
+  const anyModalOpen = document.querySelector('.modal.active');
+  if (!anyModalOpen) $('modalBackdrop').classList.remove('active');
+}
+
+// Buttons in popup
+$('remPopupClose').addEventListener('click', closeReminderPopup);
+$('remPopupDismiss').addEventListener('click', closeReminderPopup);
+$('remPopupOpenView').addEventListener('click', () => {
+  closeReminderPopup();
+  switchView('reminders');
+});
+$('remPopupSnoozeAll').addEventListener('click', () => {
+  document.querySelectorAll('#remPopupBody .rem-popup-card').forEach(card => {
+    const id = +card.dataset.id;
+    const cur = crm.get(id).reminder;
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    crm.set(id, { reminder: { date: d.toISOString(), note: cur?.note || '' } });
+    remPop.clear(id);
+  });
+  closeReminderPopup();
+  renderTable(); refreshTabCounts();
+  if (state.currentView === 'reminders') renderReminders();
+  toast('Snoozed all 1 day');
+});
+
+// Hook into stage changes — when status updates, clear popup state for that contact
+const _origCrmSet = crm.set.bind(crm);
+crm.set = function(id, patch) {
+  const prev = crm.get(id);
+  _origCrmSet(id, patch);
+  if ('status' in patch && patch.status !== prev.status) {
+    // Status changed — user took action, reset popup count (so reminder won't pop today)
+    const s = remPop.get(id);
+    if (s.lastShownDay) {
+      remPop.set(id, { shownTimes: MAX_DAILY_POPS, lastShownAt: Date.now() });
+    }
+  }
+};
+
+// Notification permission banner
+function maybeShowNotifBanner() {
+  if (typeof Notification === 'undefined') return;
+  if (Notification.permission !== 'default') return;
+  if (sessionStorage.getItem('apollo_notif_dismissed')) return;
+  const banner = document.createElement('div');
+  banner.className = 'notif-banner';
+  banner.innerHTML = `
+    <div class="notif-banner-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+    <div class="notif-banner-text">
+      <b>Enable desktop alerts?</b><br>Get pinged when follow-up reminders come due — even when this tab is in the background.
+    </div>
+    <div class="notif-banner-actions">
+      <button class="btn primary" id="notifEnable">Enable</button>
+      <button class="btn" id="notifDismiss">No thanks</button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+  document.getElementById('notifEnable').addEventListener('click', async () => {
+    await Notification.requestPermission();
+    banner.remove();
+  });
+  document.getElementById('notifDismiss').addEventListener('click', () => {
+    sessionStorage.setItem('apollo_notif_dismissed', '1');
+    banner.remove();
+  });
+}
+
+// Run reminder check: on boot, then every 30 min
+function checkRemindersAndPop() {
+  const due = getPoppableDue();
+  if (due.length > 0) openReminderPopup(due);
+}
 
 // ============ BOOT ============
-loadData();
-</script>
-
-<!-- ============ COMPOSE EMAIL MODAL ============ -->
-<div class="compose-overlay" id="composeOverlay" aria-hidden="true">
-  <div class="compose-modal" role="dialog" aria-label="Compose email">
-    <div class="compose-head">
-      <div class="compose-title">New message</div>
-      <button class="compose-close" id="composeClose" aria-label="Close">&times;</button>
-    </div>
-    <div class="compose-body">
-
-      <!-- To row with Cc/Bcc toggle -->
-      <div class="compose-row" id="toRow">
-        <label>To</label>
-        <div class="chip-field" data-field="to">
-          <input type="text" placeholder="Recipients">
-        </div>
-        <div class="cc-bcc-toggle">
-          <button type="button" data-show="cc">Cc</button>
-          <button type="button" data-show="bcc">Bcc</button>
-        </div>
-      </div>
-
-      <!-- Cc row (hidden until toggled) -->
-      <div class="compose-row" id="ccRow" style="display:none">
-        <label>Cc</label>
-        <div class="chip-field" data-field="cc">
-          <input type="text" placeholder="">
-        </div>
-      </div>
-
-      <!-- Bcc row (hidden until toggled) -->
-      <div class="compose-row" id="bccRow" style="display:none">
-        <label>Bcc</label>
-        <div class="chip-field" data-field="bcc">
-          <input type="text" placeholder="">
-        </div>
-      </div>
-
-      <!-- Subject row -->
-      <div class="compose-row subject-row">
-        <input type="text" id="composeSubject" placeholder="Subject">
-      </div>
-
-      <div class="compose-tabs" role="tablist">
-        <button class="compose-tab active" data-ctab="text" type="button">Write</button>
-        <button class="compose-tab" data-ctab="html" type="button">HTML file</button>
-      </div>
-
-      <div class="compose-panel" data-panel="text">
-        <textarea id="composeBody" placeholder="Your message…"></textarea>
-      </div>
-
-      <div class="compose-panel" data-panel="html" style="display:none">
-        <div class="html-drop" id="htmlDrop">
-          <input type="file" id="htmlFile" accept=".html,.htm,text/html" style="display:none">
-          <div class="html-drop-text">
-            <strong>Drop an HTML file here</strong> or <label for="htmlFile" class="html-drop-link">browse</label>
-          </div>
-          <div class="html-drop-hint">HTML is copied to your clipboard — paste into Gmail's body with Ctrl+V.</div>
-        </div>
-        <div class="html-preview" id="htmlPreview" style="display:none">
-          <div class="html-preview-head">
-            <span id="htmlFileName"></span>
-            <button class="html-clear" id="htmlClear" type="button">Remove</button>
-          </div>
-          <iframe id="htmlPreviewFrame" sandbox="allow-same-origin"></iframe>
-        </div>
-      </div>
-    </div>
-    <div class="compose-foot">
-      <div class="compose-status" id="composeStatus">Opens Gmail in a new tab with fields pre-filled. Close the tab without sending to save as draft.</div>
-      <div class="compose-actions">
-        <button class="compose-btn-sec" id="composeCancel" type="button">Cancel</button>
-        <button class="compose-btn-pri" id="composeSend" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Open in Gmail
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="compose-toast" id="composeToast"></div>
-
-<script>
-(function () {
-  const overlay    = document.getElementById('composeOverlay');
-  const openBtn    = document.getElementById('composeBtn');
-  const closeBtn   = document.getElementById('composeClose');
-  const cancelBtn  = document.getElementById('composeCancel');
-  const sendBtn    = document.getElementById('composeSend');
-  const subjEl     = document.getElementById('composeSubject');
-  const bodyEl     = document.getElementById('composeBody');
-  const tabs       = document.querySelectorAll('.compose-tab');
-  const panels     = document.querySelectorAll('.compose-panel');
-  const drop       = document.getElementById('htmlDrop');
-  const fileInput  = document.getElementById('htmlFile');
-  const preview    = document.getElementById('htmlPreview');
-  const previewFrame = document.getElementById('htmlPreviewFrame');
-  const fileName   = document.getElementById('htmlFileName');
-  const clearBtn   = document.getElementById('htmlClear');
-  const toastEl    = document.getElementById('composeToast');
-
-  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const recipients = { to: [], cc: [], bcc: [] };
-  let mode = 'text';
-  let htmlContent = null;
-  let lastAutoGreeting = '';
-
-  // ---------- Modal open/close ----------
-  function openModal() {
-    overlay.classList.add('open');
-    overlay.setAttribute('aria-hidden', 'false');
-    setTimeout(() => document.querySelector('.chip-field[data-field="to"] input').focus(), 50);
-  }
-  function closeModal() {
-    overlay.classList.remove('open');
-    overlay.setAttribute('aria-hidden', 'true');
-    closeChipMenu();
-  }
-  openBtn.addEventListener('click', openModal);
-  closeBtn.addEventListener('click', closeModal);
-  cancelBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
-  });
-
-  // ---------- Toast ----------
-  function toast(msg, type, durationMs) {
-    toastEl.innerHTML = msg;
-    toastEl.className = 'compose-toast show ' + (type || '');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => toastEl.classList.remove('show'), durationMs || 4000);
-  }
-
-  // ---------- Name derivation & greeting ----------
-  function deriveName(email) {
-    const local = (email.split('@')[0] || '').toString();
-    if (!local) return '';
-    const parts = local
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .split(/[.\-_+]+/)
-      .map(p => p.replace(/\d+/g, '').trim())
-      .filter(Boolean);
-    if (!parts.length) return '';
-    return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(' ');
-  }
-
-  function buildGreeting(emails) {
-    const names = emails.map(deriveName).filter(Boolean);
-    if (!names.length) return '';
-    if (names.length === 1) return 'Dear ' + names[0] + ',\n\n';
-    if (names.length === 2) return 'Dear ' + names[0] + ' and ' + names[1] + ',\n\n';
-    return 'Dear ' + names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] + ',\n\n';
-  }
-
-  function updateGreeting() {
-    if (mode !== 'text') return;
-    const newGreeting = buildGreeting(recipients.to);
-    const current = bodyEl.value;
-    // Replace only if body is empty OR still starts with the previous auto-greeting
-    if (current === '' || (lastAutoGreeting && current.startsWith(lastAutoGreeting))) {
-      bodyEl.value = newGreeting + current.slice(lastAutoGreeting.length);
-      lastAutoGreeting = newGreeting;
-    } else {
-      // User has edited — track new greeting but don't overwrite
-      lastAutoGreeting = newGreeting;
+loadData().then(() => {
+  // Wait a moment after load so user sees the UI before any popup
+  setTimeout(() => {
+    checkRemindersAndPop();
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      maybeShowNotifBanner();
     }
-  }
+  }, 1500);
+});
 
-  // ---------- Chip rendering ----------
-  function renderField(field) {
-    const container = document.querySelector('.chip-field[data-field="' + field + '"]');
-    const input = container.querySelector('input');
-    container.querySelectorAll('.chip').forEach(c => c.remove());
-    recipients[field].forEach(email => {
-      const chip = createChip(field, email);
-      container.insertBefore(chip, input);
-    });
-  }
-  function renderAll() { renderField('to'); renderField('cc'); renderField('bcc'); }
-
-  function createChip(field, email) {
-    const chip = document.createElement('span');
-    chip.className = 'chip' + (EMAIL_RE.test(email) ? '' : ' invalid');
-    chip.dataset.email = email;
-    chip.dataset.field = field;
-    const emailSpan = document.createElement('span');
-    emailSpan.className = 'chip-email';
-    emailSpan.textContent = email;
-    chip.appendChild(emailSpan);
-    const caret = document.createElement('button');
-    caret.type = 'button';
-    caret.className = 'chip-caret';
-    caret.setAttribute('aria-label', 'Options');
-    caret.textContent = '▾';
-    caret.addEventListener('click', e => { e.stopPropagation(); openChipMenu(chip, field, email); });
-    const x = document.createElement('button');
-    x.type = 'button';
-    x.className = 'chip-x';
-    x.setAttribute('aria-label', 'Remove');
-    x.textContent = '×';
-    x.addEventListener('click', e => { e.stopPropagation(); removeRecipient(field, email); });
-    chip.appendChild(caret);
-    chip.appendChild(x);
-    return chip;
-  }
-
-  // ---------- Chip menu (move / remove) ----------
-  function openChipMenu(chip, field, email) {
-    closeChipMenu();
-    const menu = document.createElement('div');
-    menu.className = 'chip-menu';
-    const opts = [
-      { field: 'to',  label: 'Move to To' },
-      { field: 'cc',  label: 'Move to Cc' },
-      { field: 'bcc', label: 'Move to Bcc' }
-    ];
-    opts.forEach(o => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = o.label;
-      if (o.field === field) b.disabled = true;
-      b.addEventListener('click', () => {
-        moveRecipient(field, o.field, email);
-        closeChipMenu();
-      });
-      menu.appendChild(b);
-    });
-    const sep = document.createElement('div');
-    sep.className = 'chip-menu-sep';
-    menu.appendChild(sep);
-    const rm = document.createElement('button');
-    rm.type = 'button';
-    rm.className = 'danger';
-    rm.textContent = 'Remove';
-    rm.addEventListener('click', () => { removeRecipient(field, email); closeChipMenu(); });
-    menu.appendChild(rm);
-
-    const rect = chip.getBoundingClientRect();
-    menu.style.left = Math.min(rect.left, window.innerWidth - 170) + 'px';
-    menu.style.top  = (rect.bottom + 4) + 'px';
-    document.body.appendChild(menu);
-    setTimeout(() => document.addEventListener('click', onOutsideMenuClick, { once: true, capture: true }), 0);
-  }
-  function onOutsideMenuClick(e) {
-    if (!e.target.closest('.chip-menu')) closeChipMenu();
-    else setTimeout(() => document.addEventListener('click', onOutsideMenuClick, { once: true, capture: true }), 0);
-  }
-  function closeChipMenu() {
-    document.querySelectorAll('.chip-menu').forEach(m => m.remove());
-  }
-
-  // ---------- Recipient operations ----------
-  function addRecipient(field, rawEmail) {
-    const email = rawEmail.trim();
-    if (!email) return false;
-    // Remove from any field first (prevents duplicates across fields)
-    ['to', 'cc', 'bcc'].forEach(f => {
-      recipients[f] = recipients[f].filter(e => e.toLowerCase() !== email.toLowerCase());
-    });
-    recipients[field].push(email);
-    renderAll();
-    if (field === 'to') updateGreeting();
-    return true;
-  }
-  function removeRecipient(field, email) {
-    recipients[field] = recipients[field].filter(e => e !== email);
-    renderField(field);
-    if (field === 'to') updateGreeting();
-  }
-  function moveRecipient(fromField, toField, email) {
-    if (fromField === toField) return;
-    recipients[fromField] = recipients[fromField].filter(e => e !== email);
-    if (!recipients[toField].some(e => e.toLowerCase() === email.toLowerCase())) {
-      recipients[toField].push(email);
-    }
-    renderAll();
-    if (fromField === 'to' || toField === 'to') updateGreeting();
-    // Auto-reveal Cc/Bcc row if we're moving into it
-    if (toField === 'cc' || toField === 'bcc') {
-      const row = document.getElementById(toField + 'Row');
-      if (row.style.display === 'none') row.style.display = 'flex';
-    }
-  }
-
-  // ---------- Input wiring ----------
-  function consumeInput(field, input) {
-    const raw = input.value;
-    if (!raw.trim()) return;
-    const parts = raw.split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
-    parts.forEach(p => addRecipient(field, p));
-    input.value = '';
-  }
-
-  ['to', 'cc', 'bcc'].forEach(field => {
-    const container = document.querySelector('.chip-field[data-field="' + field + '"]');
-    const input = container.querySelector('input');
-    container.addEventListener('click', e => {
-      if (e.target === container || e.target.classList.contains('chip-field')) input.focus();
-    });
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ',' || e.key === ';' || e.key === 'Tab') {
-        if (input.value.trim()) {
-          e.preventDefault();
-          consumeInput(field, input);
-        }
-      } else if (e.key === 'Backspace' && !input.value && recipients[field].length) {
-        const last = recipients[field].pop();
-        renderField(field);
-        if (field === 'to') updateGreeting();
-      }
-    });
-    input.addEventListener('blur', () => {
-      if (input.value.trim()) consumeInput(field, input);
-    });
-    input.addEventListener('paste', e => {
-      // Let paste happen, then split on next tick
-      setTimeout(() => {
-        if (input.value.match(/[,;\s]/)) consumeInput(field, input);
-      }, 0);
-    });
-  });
-
-  // ---------- Cc/Bcc reveal toggles ----------
-  document.querySelectorAll('.cc-bcc-toggle button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const which = btn.dataset.show;
-      const row = document.getElementById(which + 'Row');
-      const visible = row.style.display !== 'none';
-      row.style.display = visible ? 'none' : 'flex';
-      btn.classList.toggle('active', !visible);
-      if (!visible) {
-        setTimeout(() => row.querySelector('input').focus(), 0);
-      }
-    });
-  });
-
-  // ---------- Tab switch ----------
-  tabs.forEach(t => t.addEventListener('click', () => {
-    tabs.forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    mode = t.dataset.ctab;
-    panels.forEach(p => p.style.display = p.dataset.panel === mode ? '' : 'none');
-  }));
-
-  // ---------- HTML file upload ----------
-  function loadHtml(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      htmlContent = String(e.target.result || '');
-      fileName.textContent = file.name;
-      drop.style.display = 'none';
-      preview.style.display = '';
-      previewFrame.srcdoc = htmlContent;
-    };
-    reader.readAsText(file);
-  }
-  fileInput.addEventListener('change', e => loadHtml(e.target.files[0]));
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
-  drop.addEventListener('drop', e => {
-    e.preventDefault();
-    drop.classList.remove('dragover');
-    const f = e.dataTransfer.files[0];
-    if (f && /\.html?$/i.test(f.name)) loadHtml(f);
-    else toast('Please drop an .html file', 'err');
-  });
-  clearBtn.addEventListener('click', () => {
-    htmlContent = null; fileName.textContent = '';
-    preview.style.display = 'none';
-    drop.style.display = '';
-    fileInput.value = '';
-  });
-
-  // ---------- Clipboard ----------
-  async function copyHtmlToClipboard(html) {
-    try {
-      const blob = new Blob([html], { type: 'text/html' });
-      const textBlob = new Blob([html.replace(/<[^>]+>/g, ' ')], { type: 'text/plain' });
-      const item = new ClipboardItem({ 'text/html': blob, 'text/plain': textBlob });
-      await navigator.clipboard.write([item]);
-      return true;
-    } catch (err) {
-      try {
-        await navigator.clipboard.writeText(html);
-        return true;
-      } catch { return false; }
-    }
-  }
-
-  // ---------- Gmail URL build + open ----------
-  function buildGmailUrl() {
-    // Flush any pending typed input
-    ['to', 'cc', 'bcc'].forEach(field => {
-      const input = document.querySelector('.chip-field[data-field="' + field + '"] input');
-      if (input.value.trim()) consumeInput(field, input);
-    });
-
-    const validTo  = recipients.to.filter(e => EMAIL_RE.test(e));
-    const validCc  = recipients.cc.filter(e => EMAIL_RE.test(e));
-    const validBcc = recipients.bcc.filter(e => EMAIL_RE.test(e));
-
-    const params = new URLSearchParams();
-    params.set('view', 'cm');
-    params.set('fs', '1');
-    params.set('tf', '1');
-    if (validTo.length)  params.set('to',  validTo.join(','));
-    if (validCc.length)  params.set('cc',  validCc.join(','));
-    if (validBcc.length) params.set('bcc', validBcc.join(','));
-    if (subjEl.value.trim()) params.set('su', subjEl.value.trim());
-    if (mode === 'text' && bodyEl.value) params.set('body', bodyEl.value);
-
-    return { url: 'https://mail.google.com/mail/?' + params.toString(), to: validTo };
-  }
-
-  function openInNewTab(url) {
-    // Try window.open (uses user activation)
-    const win = window.open(url, '_blank');
-    if (win && !win.closed) return true;
-    // Fallback: programmatic anchor click
-    const a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    return true;
-  }
-
-  sendBtn.addEventListener('click', async () => {
-    const { url, to } = buildGmailUrl();
-    if (to.length === 0) {
-      toast('Please add at least one valid recipient in <b>To</b>', 'err');
-      document.querySelector('.chip-field[data-field="to"] input').focus();
-      return;
-    }
-    if (mode === 'html' && !htmlContent) {
-      toast('Please upload an HTML file or switch to <b>Write</b> tab', 'err');
-      return;
-    }
-
-    // IMPORTANT: open window synchronously (user activation) BEFORE any await
-    const opened = openInNewTab(url);
-    if (!opened) {
-      toast(
-        'Your browser blocked the popup. <a class="compose-fallback" href="' + url + '" target="_blank" rel="noopener">Click here to open Gmail.</a>',
-        'err', 8000
-      );
-      return;
-    }
-
-    if (mode === 'html' && htmlContent) {
-      const ok = await copyHtmlToClipboard(htmlContent);
-      if (ok) toast('Gmail opened. HTML copied — paste with <b>Ctrl+V</b> in the body.', 'ok', 6000);
-      else    toast('Gmail opened, but clipboard copy failed. Paste HTML manually.', 'err', 6000);
-    } else {
-      toast('Gmail opened — review and send.', 'ok');
-    }
-    closeModal();
-  });
-
-  // ---------- Reset modal on re-open ----------
-  // (uncomment to reset every time; currently we preserve state across opens)
-})();
+// Re-check every 30 min
+setInterval(checkRemindersAndPop, 30 * 60 * 1000);
+// Also check whenever the tab regains focus (catches reminders set in another tab)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) checkRemindersAndPop();
+});
 </script>
 </body>
 </html>

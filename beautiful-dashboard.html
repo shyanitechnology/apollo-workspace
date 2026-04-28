@@ -3,12 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style id="auth-blocker-style">html{visibility:hidden!important;}</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
-<script src="/supabase-config.js"></script>
-<script src="/auth.js"></script>
-<title>Valencia Data Base · Global Lead Atlas</title>
-<link rel="icon" type="image/png" href="/logo.png">
+<title>Apollo Intelligence · Global Lead Atlas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -108,14 +103,12 @@ body::before {
 .brand-logo {
   width: 52px; height: 52px;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--grad-1);
   display: grid;
   place-items: center;
-  padding: 6px; box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(20, 184, 184, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   position: relative;
 }
-.brand-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .brand-logo::after {
   content: ''; position: absolute; inset: 2px;
   border-radius: 12px;
@@ -889,10 +882,13 @@ canvas { max-width: 100%; }
     <div>
       <div class="brand">
         <div class="brand-logo">
-          <img src="/logo.png" alt="Valencia">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+          </svg>
         </div>
         <div class="brand-text">
-          <div class="brand-name">Valencia Data Base</div>
+          <div class="brand-name">Apollo Intelligence</div>
           <div class="brand-tag">Global Lead Atlas · v2.1</div>
         </div>
       </div>

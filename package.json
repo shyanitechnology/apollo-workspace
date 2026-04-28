@@ -1,0 +1,10 @@
+{
+  "name": "apollo-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apollo Workbench — static lead atlas + CRM with Vercel serverless email",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}
