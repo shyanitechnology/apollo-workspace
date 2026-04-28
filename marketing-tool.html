@@ -133,6 +133,54 @@ html, body {
 }
 .top-actions { display: flex; gap: 8px; align-items: center; }
 
+/* Top-bar SMTP status pill — visible from every page so user knows config state */
+.smtp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 12px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: 8px;
+  color: var(--rose);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  max-width: 240px;
+}
+.smtp-pill:hover { background: rgba(244, 63, 94, 0.18); border-color: var(--rose); }
+.smtp-pill strong {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.smtp-pill-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.smtp-pill.configured {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--emerald);
+}
+.smtp-pill.configured:hover { background: rgba(16, 185, 129, 0.18); border-color: var(--emerald); }
+.smtp-pill svg { flex-shrink: 0; opacity: 0.85; }
+@media (max-width: 720px) {
+  .smtp-pill-label { display: none; }
+  .smtp-pill { padding: 0 9px; }
+}
+
 /* ============ PAGE NAVIGATION (shared across tool pages) ============ */
 .page-nav {
   display: inline-flex;
@@ -2203,6 +2251,11 @@ html, body {
       <span class="search-shortcut">⌘K</span>
     </div>
     <div class="top-actions">
+      <button class="smtp-pill" id="topSmtpBtn" title="Configure SMTP credentials (email + App Password) for sending mails">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="smtp-pill-label">SMTP:</span>
+        <strong id="topSmtpStatus">not set</strong>
+      </button>
       <nav class="page-nav">
         <a class="page-nav-btn" href="./index.html" title="Home · pick a tool">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -2447,7 +2500,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.3-smtp-settings-saved · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.4-smtp-pill-topbar · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -3054,6 +3107,7 @@ async function loadData() {
     $('statusText').textContent = 'Loaded ' + fmt(state.contacts.length) + ' contacts in ' + ms + 'ms';
     $('totalContacts').textContent = fmt(state.contacts.length);
     $('totalMarkets').textContent = state.countries.length;
+    refreshTopSmtpPill();
     $('loading').classList.add('hidden');
   } catch (e) {
     $('loadingText').textContent = 'Failed to load data';
@@ -4927,8 +4981,25 @@ function closeSettingsModal() {
   if (!document.querySelector('.modal.active')) $('modalBackdrop').classList.remove('active');
 }
 
-// Wire settings modal
+// Refresh the topbar SMTP status pill — green w/ email if saved, red "not set" otherwise
+function refreshTopSmtpPill() {
+  const btn = $('topSmtpBtn'); if (!btn) return;
+  const stat = $('topSmtpStatus');
+  const s = loadSmtp();
+  if (s && s.user) {
+    btn.classList.add('configured');
+    btn.title = 'SMTP configured for ' + s.user + '. Click to edit.';
+    stat.textContent = s.user;
+  } else {
+    btn.classList.remove('configured');
+    btn.title = 'No SMTP credentials saved. Click to configure email + App Password.';
+    stat.textContent = 'not set';
+  }
+}
+
+// Wire settings modal — both entry points open the same modal
 $('openSettings').addEventListener('click', openSettingsModal);
+$('topSmtpBtn').addEventListener('click', openSettingsModal);
 $('settingsClose').addEventListener('click', closeSettingsModal);
 
 $('smtpPreset').addEventListener('change', () => {
@@ -4970,6 +5041,7 @@ $('smtpSave').addEventListener('click', () => {
   toast('SMTP credentials saved');
   $('smtpSavedIndicator').style.display = '';
   $('smtpSavedFor').textContent = 'Sending as ' + cfg.user;
+  refreshTopSmtpPill();
 });
 $('smtpClear').addEventListener('click', () => {
   if (!confirm('Wipe saved SMTP credentials from this browser?')) return;
@@ -4978,6 +5050,7 @@ $('smtpClear').addEventListener('click', () => {
   $('smtpPass').value = ''; $('smtpDisplayName').value = '';
   $('smtpSavedIndicator').style.display = 'none';
   toast('Credentials cleared', 'info');
+  refreshTopSmtpPill();
 });
 $('smtpTestFromSettings').addEventListener('click', async () => {
   // Save first, then run the same test as the Compose-modal one
