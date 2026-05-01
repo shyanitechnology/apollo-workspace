@@ -2663,7 +2663,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.9-default-bcc · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v4.0-selected-to-cc · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -3701,14 +3701,15 @@ function chipMove(em, fromField, toField) {
   renderRecipChips();
 }
 
-// Initialise from main-table selection
+// Initialise from main-table selection.
+// Selected contacts go to CC by default — TO is left empty for the user to fill in (their own
+// address, a primary recipient, etc.). Default BCC chips also pre-fill. Drag chips to rearrange.
 function recipsFromSelection() {
-  recipState.to = getSelectedRecords().filter(r => r.em).map(r => ({
+  recipState.cc = getSelectedRecords().filter(r => r.em).map(r => ({
     id: r.id, em: r.em, n: r.n, c: r.c, co: r.co, t: r.t,
   }));
-  recipState.cc = [];
+  recipState.to = [];
   recipState.bcc = [];
-  // Pre-fill default BCC chips (user can × them off this session, or change them in SMTP Settings)
   applyDefaultBcc();
   renderRecipChips();
 }
@@ -4183,7 +4184,24 @@ function stripHtml(html) {
 
 async function composeSendSmtp() {
   const toList = recipState.to;
-  if (toList.length === 0) { toast('Add at least one TO recipient', 'warn'); return; }
+  // Need at least ONE recipient anywhere
+  if (toList.length === 0 && recipState.cc.length === 0) {
+    toast('No recipients. Add at least one TO or CC.', 'warn');
+    return;
+  }
+  // Per-individual / per-company modes need TO chips (they iterate over them).
+  // If TO is empty, prompt to switch to "One combined email to all".
+  let _mode = getSendMode();
+  if (toList.length === 0 && _mode !== 'combined') {
+    if (!confirm(
+      'TO is empty (your contacts are in CC).\n\n' +
+      'Per-recipient and Per-company modes need contacts in TO.\n\n' +
+      'OK = switch to "One combined email" and send (one email to all CC + BCC)\n' +
+      'Cancel = abort so you can drag chips from CC to TO yourself'
+    )) return;
+    _mode = 'combined';
+    document.querySelector('input[name="sendMode"][value="combined"]').checked = true;
+  }
   syncFromCombined();
   const from = $('composeFrom').value.trim();
   const fromEmail = $('composeFromEmail').value.trim();
@@ -4192,7 +4210,7 @@ async function composeSendSmtp() {
   const ccGlobal = recipState.cc.map(r => r.em).join(', ');
   const bccGlobal = recipState.bcc.map(r => r.em).join(', ');
   const auto = $('autoReminder').checked;
-  const mode = getSendMode();
+  const mode = _mode; // possibly-overridden by the TO-empty fallback above
 
   // For "group by company" mode, bucket TO recipients by company
   let companyGroups = null;
@@ -4240,23 +4258,26 @@ async function composeSendSmtp() {
   }
 
   if (mode === 'combined') {
-    // ONE email to everyone in TO + CC + BCC. Variables = comma-list.
-    const subj = renderTemplateCombined($('composeSubject').value, toList);
-    const text = renderTemplateCombined($('composeBody').value,    toList);
-    const html = renderTemplateCombined($('composeHtmlBody').value, toList);
+    // ONE email to everyone in TO + CC + BCC. Variables = comma-list (built from whichever
+    // field actually has chips — if TO is empty we use CC contacts for the variable expansion).
+    const variableSource = toList.length > 0 ? toList : recipState.cc;
+    const subj = renderTemplateCombined($('composeSubject').value, variableSource);
+    const text = renderTemplateCombined($('composeBody').value,    variableSource);
+    const html = renderTemplateCombined($('composeHtmlBody').value, variableSource);
+    const payload = {
+      from,
+      subject: subj,
+      text: text || stripHtml(html),
+      html: html || undefined,
+    };
+    if (toList.length > 0) payload.to = toList.map(r => r.em).join(', ');
+    if (ccGlobal)  payload.cc  = ccGlobal;
+    if (bccGlobal) payload.bcc = bccGlobal;
     try {
-      await sendPayload({
-        from,
-        to: toList.map(r => r.em).join(', '),
-        cc: ccGlobal || undefined,
-        bcc: bccGlobal || undefined,
-        subject: subj,
-        text: text || stripHtml(html),
-        html: html || undefined,
-      });
+      await sendPayload(payload);
       sent = 1;
-      // Log against every TO recipient that exists in our contact DB
-      toList.forEach(r => { if (r.id != null) logSendForContact(r.id, subj, auto); });
+      // Log against every TO + CC recipient that exists in our contact DB
+      [...toList, ...recipState.cc].forEach(r => { if (r.id != null) logSendForContact(r.id, subj, auto); });
     } catch (e) {
       failed = 1;
       errors.push({ to: 'all-in-one', name: '', msg: e.message });

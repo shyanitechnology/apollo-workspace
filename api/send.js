@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
   body = body || {};
 
   const { from, to, cc, bcc, subject, text, html, smtp } = body;
-  if (!to)      return res.status(400).json({ ok: false, error: 'Missing "to"' });
+  if (!to && !cc && !bcc) return res.status(400).json({ ok: false, error: 'No recipients — provide at least one of "to", "cc", or "bcc"' });
   if (!subject) return res.status(400).json({ ok: false, error: 'Missing "subject"' });
   if (!text && !html) return res.status(400).json({ ok: false, error: 'Missing body — provide "text" or "html"' });
 
