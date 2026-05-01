@@ -2663,7 +2663,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.6-cleaned-85k · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.7-group-by-company · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2723,8 +2723,9 @@ html, body {
     <div class="field-group send-mode-row">
       <label class="field-label">Send mode</label>
       <div class="send-mode-toggle">
-        <label><input type="radio" name="sendMode" value="each" checked><span>Send each individually <em>(personalised — each recipient gets their own email)</em></span></label>
-        <label><input type="radio" name="sendMode" value="combined"><span>Send one combined email <em>(everyone in TO sees everyone else; <code>{{name}}</code> becomes a comma list)</em></span></label>
+        <label><input type="radio" name="sendMode" value="each"><span>Send each individually <em>(personalised — every contact gets their own email)</em></span></label>
+        <label><input type="radio" name="sendMode" value="group" checked><span>One email per company <em>(group by company — all contacts at the same company get a single email with each other in TO. <code>{{name}}</code> = comma list of names at that company)</em></span></label>
+        <label><input type="radio" name="sendMode" value="combined"><span>One combined email to all <em>(everyone you selected, regardless of company, in one TO; <code>{{name}}</code> = full comma list)</em></span></label>
       </div>
     </div>
 
@@ -4116,9 +4117,24 @@ async function composeSendSmtp() {
   const auto = $('autoReminder').checked;
   const mode = getSendMode();
 
-  const sendCount = mode === 'combined' ? 1 : toList.length;
+  // For "group by company" mode, bucket TO recipients by company
+  let companyGroups = null;
+  if (mode === 'group') {
+    companyGroups = {};
+    for (const r of toList) {
+      const key = (r.c || '').trim() || '— No company —';
+      if (!companyGroups[key]) companyGroups[key] = [];
+      companyGroups[key].push(r);
+    }
+  }
+
+  const sendCount = mode === 'combined' ? 1
+                  : mode === 'group'    ? Object.keys(companyGroups).length
+                  : toList.length;
   const confirmMsg = mode === 'combined'
     ? `Send ONE combined email to all ${toList.length} TO recipients (everyone sees each other)?\n\n+ ${recipState.cc.length} CC, ${recipState.bcc.length} BCC.`
+    : mode === 'group'
+    ? `Send ${sendCount} email${sendCount !== 1 ? 's' : ''} — one per company.\n\n${toList.length} contacts grouped into ${sendCount} compan${sendCount !== 1 ? 'ies' : 'y'}.\n+ ${recipState.cc.length} CC, ${recipState.bcc.length} BCC on every group send.`
     : `Send ${toList.length} individual personalised email${toList.length !== 1 ? 's' : ''}?\n\n+ ${recipState.cc.length} CC, ${recipState.bcc.length} BCC on every send.`;
   if (!confirm(confirmMsg + '\n\nClick OK to proceed.')) return;
 
@@ -4169,6 +4185,38 @@ async function composeSendSmtp() {
       errors.push({ to: 'all-in-one', name: '', msg: e.message });
       console.error('[apollo] Combined SMTP send failed:', e);
     }
+  } else if (mode === 'group') {
+    // ONE email PER COMPANY — all contacts at same company in TO together
+    const groupKeys = Object.keys(companyGroups);
+    for (let gi = 0; gi < groupKeys.length; gi++) {
+      const key = groupKeys[gi];
+      const grp = companyGroups[key];
+      // Render with company-group context: {{name}} = comma list of first names AT THIS COMPANY
+      const subj = renderTemplateCombined($('composeSubject').value, grp);
+      const text = renderTemplateCombined($('composeBody').value, grp);
+      const html = renderTemplateCombined($('composeHtmlBody').value, grp);
+      try {
+        await sendPayload({
+          from,
+          to: grp.map(r => r.em).join(', '),
+          cc: ccGlobal || undefined,
+          bcc: bccGlobal || undefined,
+          subject: subj,
+          text: text || stripHtml(html),
+          html: html || undefined,
+        });
+        sent++;
+        grp.forEach(r => { if (r.id != null) logSendForContact(r.id, subj, auto); });
+        status.textContent = `⟳ Sent ${sent} / ${sendCount} (last: ${key.slice(0,30)})…`;
+        setBar(`Sent ${sent}/${sendCount} groups…`);
+      } catch (e) {
+        failed++;
+        errors.push({ to: key + ' (' + grp.length + ' contacts)', name: '', msg: e.message });
+        console.error('[apollo] Group send failed for', key, e);
+        grp.forEach(r => { if (r.id != null) crm.logActivity(r.id, 'email', `SMTP group-send FAILED: ${e.message}`); });
+      }
+      if (gi < groupKeys.length - 1) await new Promise(res => setTimeout(res, 600));
+    }
   } else {
     // Per-recipient personalised sends (existing behavior)
     for (let i = 0; i < toList.length; i++) {
@@ -4206,6 +4254,8 @@ async function composeSendSmtp() {
     status.className = 'smtp-status ok';
     status.textContent = mode === 'combined'
       ? `✓ Combined email sent to ${toList.length} TO recipients.`
+      : mode === 'group'
+      ? `✓ Sent ${sent} email${sent !== 1 ? 's' : ''} (one per company, ${toList.length} contacts total).`
       : `✓ Sent ${sent} personalised email${sent !== 1 ? 's' : ''} successfully.`;
     toast(`Sent successfully via SMTP`);
     setTimeout(closeCompose, 1500);
