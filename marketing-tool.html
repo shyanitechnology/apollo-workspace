@@ -2663,7 +2663,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.8-cross-company-prompt · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.9-default-bcc · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -2891,6 +2891,12 @@ html, body {
         <input type="checkbox" id="smtpSecure" checked style="margin-right:6px;">
         Use SSL/TLS (recommended; auto-checked for port 465)
       </label>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Default BCC (added to every Compose, comma-separated)</label>
+      <input class="field-input" id="smtpDefaultBcc" placeholder="bd@valencialifesciences.com, mkt@valencialifesciences.com">
+      <div class="field-hint">Pre-fills the BCC chip row when you open Compose. Remove via × on the chip for a one-off send, or edit here to change permanently.</div>
     </div>
 
     <div id="smtpSavedIndicator" style="display:none;padding:10px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:var(--emerald);font-size:12px;">
@@ -3621,6 +3627,16 @@ const SEED_KEY = 'apollo_default_tpl_seeded_v1';
 function loadTemplates() { return JSON.parse(localStorage.getItem(TPL_KEY) || '{}'); }
 function saveTemplates(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
 
+// Default BCC addresses — auto-populated into BCC chips every time Compose opens.
+// User can remove via × on the chip for a single send, or override permanently in SMTP Settings.
+const DEFAULT_BCC_KEY = 'apollo_default_bcc_v1';
+const DEFAULT_BCC_FALLBACK = 'bd@valencialifesciences.com, mkt@valencialifesciences.com';
+function getDefaultBccString() {
+  const v = localStorage.getItem(DEFAULT_BCC_KEY);
+  return v == null ? DEFAULT_BCC_FALLBACK : v;
+}
+function setDefaultBccString(v) { localStorage.setItem(DEFAULT_BCC_KEY, v); }
+
 // ============ RECIPIENT CHIPS (TO / CC / BCC) ============
 // Chips track full contact info per email so {{name}} {{company}} variables work.
 // Drag-and-drop between fields. Manually-typed emails get minimal { em } objects.
@@ -3692,7 +3708,27 @@ function recipsFromSelection() {
   }));
   recipState.cc = [];
   recipState.bcc = [];
+  // Pre-fill default BCC chips (user can × them off this session, or change them in SMTP Settings)
+  applyDefaultBcc();
   renderRecipChips();
+}
+
+// Add saved default BCC addresses to the BCC chip list, skipping any that already
+// appear in any field. Fallback used the first time the user opens Compose.
+function applyDefaultBcc() {
+  const str = getDefaultBccString();
+  const emails = str.split(/[\s,;]+/).map(s => s.trim()).filter(emailIsValid);
+  const taken = new Set([
+    ...recipState.to.map(r => r.em.toLowerCase()),
+    ...recipState.cc.map(r => r.em.toLowerCase()),
+    ...recipState.bcc.map(r => r.em.toLowerCase()),
+  ]);
+  for (const em of emails) {
+    if (!taken.has(em.toLowerCase())) {
+      recipState.bcc.push({ em, n: em.split('@')[0] });
+      taken.add(em.toLowerCase());
+    }
+  }
 }
 
 // Event delegation for chip clicks (X button) and drag/drop
@@ -5487,6 +5523,7 @@ function openSettingsModal() {
   $('smtpPass').value = s.pass || '';
   $('smtpDisplayName').value = s.displayName || '';
   $('smtpSecure').checked = s.secure !== false;
+  $('smtpDefaultBcc').value = getDefaultBccString();
   // Auto-pick preset if matches
   let matched = 'custom';
   for (const [k, p] of Object.entries(SMTP_PRESETS)) {
@@ -5562,6 +5599,7 @@ $('smtpSave').addEventListener('click', () => {
     return;
   }
   saveSmtp(cfg);
+  setDefaultBccString($('smtpDefaultBcc').value.trim());
   // Auto-fill the Compose modal's From fields too
   $('composeFromName').value = cfg.displayName;
   $('composeFromEmail').value = cfg.user;
