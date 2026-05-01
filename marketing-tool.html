@@ -2663,7 +2663,7 @@ html, body {
   <!-- STATUS BAR -->
   <footer class="statusbar">
     <div class="status-indicator ok" id="statusText">Ready</div>
-    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.7-group-by-company · ready</div>
+    <div id="diagBar" style="flex:1;text-align:center;color:var(--emerald);font-family:var(--mono);font-size:10px;">v3.8-cross-company-prompt · ready</div>
     <div>APOLLO WORKBENCH · <span id="totalContacts">0</span> CONTACTS · <span id="totalMarkets">0</span> MARKETS</div>
   </footer>
 </div>
@@ -3143,7 +3143,7 @@ const state = {
   roles: [],
   currentView: 'all',
   currentDetail: null,
-  browse: { country: null, company: null, companyTab: 'all' },
+  browse: { country: null, company: null, companyTab: 'all', lastPromptCompany: null },
   reminderTarget: null,
   reminderTab: 'today',
   companyHeaderCollapsed: JSON.parse(localStorage.getItem('apollo_co_header_collapsed') || 'false'),
@@ -3778,10 +3778,51 @@ function wireRecipChipEvents() {
   });
 }
 
-// Get the current send mode (each-individual vs combined)
+// Get the current send mode (each-individual vs combined vs group)
 function getSendMode() {
   const r = document.querySelector('input[name="sendMode"]:checked');
-  return r ? r.value : 'each';
+  return r ? r.value : 'group';
+}
+
+// When user starts selecting people at a NEW company while they already have selections
+// from a different company, ask: keep both, or clear the others and start fresh?
+// Returns true once handled (so callers can proceed). Idempotent per browse-company switch.
+function maybePromptCrossCompany() {
+  const currentCo = state.browse.company;
+  const currentSlug = state.browse.country;
+  if (!currentCo) return; // not in a company view
+  const key = currentSlug + '::' + currentCo;
+  if (state.browse.lastPromptCompany === key) return; // already asked for this company
+
+  // Find existing selections from contacts NOT at this company/market
+  const others = [...state.selected].map(id => state.contacts[id]).filter(r =>
+    r && ((r.c || '') !== currentCo || r.s !== currentSlug)
+  );
+  if (others.length === 0) {
+    state.browse.lastPromptCompany = key;
+    return;
+  }
+
+  // Build a friendly message listing the other companies
+  const byCompany = {};
+  others.forEach(r => { const c = r.c || '— No company —'; byCompany[c] = (byCompany[c] || 0) + 1; });
+  const lines = Object.entries(byCompany).map(([c, n]) => `   • ${c} — ${n} contact${n !== 1 ? 's' : ''}`).join('\n');
+  const msg =
+    `You already have ${others.length} contact${others.length !== 1 ? 's' : ''} selected from a different company:\n\n` +
+    `${lines}\n\n` +
+    `Adding from "${currentCo}" now?\n\n` +
+    `• OK   = KEEP existing selections (build a multi-company selection — useful for "one combined email")\n` +
+    `• Cancel = CLEAR those and start fresh with this company only`;
+  const keep = confirm(msg);
+  if (!keep) {
+    others.forEach(r => state.selected.delete(r.id));
+    updateSelectionUI();
+    renderTable();
+    toast(`Cleared ${others.length} from other companies`, 'info');
+  } else {
+    toast(`Keeping ${others.length} from other companies`, 'info');
+  }
+  state.browse.lastPromptCompany = key;
 }
 
 // Format a list of strings: ["A", "B", "C"] -> "A, B and C"
@@ -4636,6 +4677,7 @@ function renderBrowseCountries(filter) {
     el.addEventListener('click', () => {
       state.browse.country = el.dataset.country;
       state.browse.company = null;
+      state.browse.lastPromptCompany = null;
       renderBrowseCountries($('bwCountrySearch').value);
       renderBrowseCompanies('');
       $('bwPeople').innerHTML = '<div class="browse-empty">Pick a company to see people.</div>';
@@ -4733,6 +4775,8 @@ function renderBrowseCompanies(filter) {
   $('bwCompanies').querySelectorAll('.browse-item').forEach(el => {
     el.addEventListener('click', () => {
       state.browse.company = el.dataset.company;
+      // New company → re-prompt on first selection here if cross-company state exists
+      state.browse.lastPromptCompany = null;
       renderBrowseCompanies($('bwCompanySearch').value);
       renderBrowsePeople('');
     });
@@ -4800,6 +4844,10 @@ function renderBrowsePeople(filter) {
     el.addEventListener('click', (e) => {
       const id = +el.dataset.id;
       if (e.target.closest('[data-pcheck]')) {
+        // If user is about to ADD a person from this company while already having
+        // selections from a different company, ask whether to keep or clear those.
+        // Only fires when ADDING (not when unchecking), and only once per company switch.
+        if (!state.selected.has(id)) maybePromptCrossCompany();
         toggleSelect(id);
         renderBrowsePeople($('bwPeopleSearch').value);
         return;
@@ -5013,8 +5061,13 @@ function renderPeopleBar(people) {
     </div>
   `;
   $('pbSelectAll').addEventListener('click', () => {
-    if (allSelected) peopleIds.forEach(id => state.selected.delete(id));
-    else peopleIds.forEach(id => state.selected.add(id));
+    if (allSelected) {
+      peopleIds.forEach(id => state.selected.delete(id));
+    } else {
+      // About to ADD all visible. Prompt if cross-company selections exist.
+      maybePromptCrossCompany();
+      peopleIds.forEach(id => state.selected.add(id));
+    }
     updateSelectionUI();
     renderBrowsePeople($('bwPeopleSearch').value);
   });
